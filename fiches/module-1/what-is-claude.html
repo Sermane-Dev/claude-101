@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What is Claude? — Claude 101</title>
+<link rel="icon" href="../../assets/img/datacamp-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f5f7fa; --card:#ffffff; --ink:#05192d; --muted:#5d6a78; --line:#e1e6ec;
+    --accent:#05192d; --accent-soft:#d9fde8; --green:#03ef62;
+    --c1:#05192d; --c2:#0a7d4b; --c3:#3b5bdb; --c4:#b07a00; --c5:#7048e8;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0b1724; --card:#13253a; --ink:#eef3f8; --muted:#9fb0c2; --line:#22384f; --accent:#03ef62; --accent-soft:#123a2a; --c1:#03ef62; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.55 Inter,system-ui,sans-serif}
+  .wrap{max-width:980px;margin:0 auto;padding:40px 20px 60px}
+  header{margin-bottom:28px}
+  .kicker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  h1{font-family:"Space Grotesk",Inter,sans-serif;font-size:clamp(30px,5vw,44px);line-height:1.1;margin:8px 0 10px}
+  .meta{color:var(--muted);font-size:14px;display:flex;gap:16px;flex-wrap:wrap}
+  .meta span{background:var(--card);border:1px solid var(--line);padding:4px 10px;border-radius:99px}
+  .tldr{margin-top:20px;background:var(--accent-soft);border-left:4px solid var(--green);padding:14px 18px;border-radius:8px}
+  .tldr b{color:var(--accent)}
+  h2{font-family:"Space Grotesk",Inter,sans-serif;font-size:22px;margin:38px 0 14px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  @media (max-width:680px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 20px 18px;border-top:5px solid var(--c,var(--accent));display:flex;flex-direction:column}
+  .card .num{font-size:12px;font-weight:600;color:var(--c);letter-spacing:.08em;text-transform:uppercase}
+  .card h3{font-family:"Space Grotesk",Inter,sans-serif;font-size:19px;margin:4px 0 10px;line-height:1.25}
+  .card ul{margin:0 0 12px;padding-left:18px}
+  .card li{margin:4px 0}
+  .ex{margin-top:auto;background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:10px 12px;font-size:14px}
+  .ex .lbl{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--c);margin-bottom:3px}
+  .wide{grid-column:1/-1}
+  .trio{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:6px 0 12px}
+  .trio div{background:var(--bg);border-radius:10px;padding:10px 12px;font-size:14px}
+  .trio b{display:block;color:var(--c);margin-bottom:2px}
+  mark{background:var(--accent-soft);color:inherit;padding:0 3px;border-radius:3px}
+  .flash{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .fc{perspective:900px;height:150px;cursor:pointer;border:0;background:none;padding:0;font:inherit;color:inherit;text-align:left}
+  .fc-in{position:relative;width:100%;height:100%;transition:transform .45s;transform-style:preserve-3d}
+  .fc.on .fc-in{transform:rotateY(180deg)}
+  .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;padding:16px;display:flex;flex-direction:column;justify-content:center;border:1px solid var(--line)}
+  .front{background:var(--card);font-weight:600}
+  .front small{font-weight:400;color:var(--muted);margin-top:8px;font-size:12px}
+  .back{background:#05192d;color:#fff;border-color:var(--green);transform:rotateY(180deg);font-size:14px}
+  .tip{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .tip h3{margin:0 0 8px;font-size:16px}
+  .tip ol{margin:0;padding-left:20px}
+  .topbar{background:#05192d;color:#fff}
+  .topbar .in{max-width:980px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:12px;font-size:14px}
+  .topbar img{width:28px;height:28px;border-radius:6px}
+  .topbar a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3)}
+  .topbar b{color:#03ef62}
+  .backnav{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:28px}
+  .backnav a{text-decoration:none;font-weight:600;color:var(--ink);background:var(--card);border:1px solid var(--line);padding:10px 14px;border-radius:10px}
+  footer{margin-top:40px;color:var(--muted);font-size:13px;text-align:center}
+
+  /* Impression / export PDF : pas de carte coupée entre deux pages */
+  @page{size:A4;margin:12mm}
+  @media print{
+    .topbar,.backnav{display:none}
+    :root{--bg:#fff;--card:#fff;--ink:#05192d;--muted:#555;--line:#ccc;--accent:#05192d;--accent-soft:#d9fde8}
+    body{font-size:12.5px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .wrap{max-width:none;padding:0}
+    h2{break-after:avoid;page-break-after:avoid;margin-top:22px}
+    .grid,.flash{display:block}
+    .card,.tip,.tldr,.ex,.trio div{break-inside:avoid;page-break-inside:avoid}
+    .card{margin-bottom:12px}
+    .trio{display:grid;grid-template-columns:1fr 1fr 1fr}
+    /* Flashcards : question + réponse visibles à plat */
+    .fc{display:block;height:auto;width:100%;margin-bottom:8px;break-inside:avoid;page-break-inside:avoid;perspective:none}
+    .fc-in{transform:none!important;height:auto}
+    .face{position:static;backface-visibility:visible;transform:none!important}
+    .front{border-radius:10px 10px 0 0;border-bottom:0}
+    .front small{display:none}
+    .back{border-radius:0 0 10px 10px;background:var(--accent-soft);color:var(--ink)}
+    .back::before{content:"Réponse : ";font-weight:600;color:var(--accent)}
+  }
+
+
+  .five{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:6px 0 12px}
+  .five div{background:var(--bg);border-radius:10px;padding:12px;font-size:13.5px}
+  .five b{display:block;margin-bottom:4px;color:var(--c)}
+  .five i{display:block;margin-top:6px;color:var(--muted);font-style:normal;font-size:12.5px}
+  .hhh{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 12px}
+  .hhh div{background:var(--bg);border-radius:10px;padding:10px;text-align:center;font-size:13px}
+  .hhh b{display:block;font:700 22px "Space Grotesk",sans-serif;color:var(--c)}
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0 12px;font-size:14px}
+  .vs div{border-radius:10px;padding:10px 12px;background:var(--bg)}
+  .vs h4{margin:0 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:.06em}
+  .vs ul{margin:0;padding-left:16px}
+  table.acc{width:100%;border-collapse:collapse;font-size:14px;margin:6px 0 12px}
+  .acc th,.acc td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .acc th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .acc td:first-child{font-weight:600;white-space:nowrap}
+  .note{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+  /* QCM */
+  .quiz{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;border-top:5px solid var(--green)}
+  .q{margin:0 0 18px}
+  .q p{font-weight:600;margin:0 0 8px}
+  .q button.opt{display:block;width:100%;text-align:left;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;cursor:pointer}
+  .q button.opt:hover{border-color:#03ef62}
+  .q button.ok{background:#d9fde8;border-color:#03ef62}
+  .q button.ko{background:#ffe3e3;border-color:#e03131}
+  .q .why{display:none;font-size:13.5px;margin-top:6px;padding:8px 12px;border-left:3px solid #03ef62;background:var(--bg);border-radius:6px}
+  .q.done .why{display:block}
+  .qscore{display:flex;align-items:center;gap:14px;background:var(--accent-soft);border-radius:12px;padding:12px 16px;font-weight:600}
+  .qscore .big{width:72px;height:72px;border-radius:16px;background:#05192d;color:#03ef62;display:grid;place-items:center;font:700 24px "Space Grotesk",sans-serif}
+  .reflect{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .reflect h3{margin:0 0 8px;font-size:16px}
+  @media (max-width:680px){.vs,.hhh{grid-template-columns:1fr}}
+  @media print{.q .why{display:block}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="in">
+  <img src="../../assets/img/datacamp-icon.png" alt="">
+  <a href="../../index.html">Claude 101</a> › <a href="../../module-1.html">Module 1 · Découvrir Claude</a> › <b>Fiche</b>
+</div></div>
+<div class="wrap">
+  <header>
+    <div class="kicker">Fiche de révision · Module 1 · Leçon 2</div>
+    <h1>What is Claude?</h1>
+    <div class="meta"><span>⏱ Lecture : 5 min</span><span>📚 Leçon : 15 min</span><span>🎯 3 objectifs</span></div>
+    <div class="tldr"><b>L'essentiel en une phrase :</b> Claude n'est pas un simple chatbot mais un <b>partenaire de réflexion</b> utile, honnête et inoffensif, que l'on peut <b>piloter</b> (ton, style, comportement) pour écrire, analyser, coder, raisonner et apprendre — sur le web, le bureau, le mobile et dans ses outils.</div>
+  </header>
+
+  <h2>Les 5 thèmes clés</h2>
+  <div class="grid">
+
+    <article class="card" style="--c:var(--c1)">
+      <span class="num">Thème 1</span>
+      <h3>Ses principes : les « 3 H »</h3>
+      <div class="hhh">
+        <div><b>H</b>Helpful<br><small>Utile</small></div>
+        <div><b>H</b>Harmless<br><small>Inoffensif</small></div>
+        <div><b>H</b>Honest<br><small>Honnête</small></div>
+      </div>
+      <ul>
+        <li>Évite les contenus toxiques ou discriminatoires et refuse d'aider à des actes illégaux ou contraires à l'éthique.</li>
+        <li>Méthode d'entraînement : la <b>Constitutional AI</b> — aligner Claude sur des valeurs humaines et le rendre transparent.</li>
+      </ul>
+      <div class="ex"><span class="lbl">Exemple</span>Si tu lui demandes d'inventer des avis clients pour un site, Claude refusera et proposera plutôt une méthode pour collecter de vrais avis.</div>
+    </article>
+
+    <article class="card" style="--c:var(--c2)">
+      <span class="num">Thème 2</span>
+      <h3>Plus qu'un chatbot</h3>
+      <div class="vs">
+        <div><h4>Chatbot classique</h4><ul><li>Arbre de décision figé</li><li>Réponses prévues d'avance</li><li>Questions simples (FAQ)</li></ul></div>
+        <div style="background:var(--accent-soft)"><h4>Claude</h4><ul><li>Partenaire de réflexion</li><li>Problèmes complexes</li><li><b>Automatise</b> et <b>augmente</b> le travail</li></ul></div>
+      </div>
+      <div class="ex"><span class="lbl">Exemple</span>Un chatbot répond « nos horaires sont 9h-18h ». Claude t'aide à <i>repenser</i> le parcours client et à rédiger la nouvelle FAQ.</div>
+    </article>
+
+    <article class="card wide" style="--c:var(--c3)">
+      <span class="num">Thème 3</span>
+      <h3>Pilotable et collaboratif (« steerable »)</h3>
+      <ul>
+        <li>On lui donne une direction sur la <b>personnalité</b>, le <b>ton</b> et le <b>comportement</b> attendus.</li>
+        <li>Résultat : moins d'efforts pour obtenir le rendu voulu, et des échanges plus fluides.</li>
+      </ul>
+      <div class="ex"><span class="lbl">Exemple</span>« Réponds comme un consultant no-code bienveillant qui parle à un artisan : phrases courtes, zéro jargon, un exemple concret par idée. »</div>
+    </article>
+
+    <article class="card wide" style="--c:var(--c4)">
+      <span class="num">Thème 4</span>
+      <h3>Ses 5 grandes capacités</h3>
+      <div class="five">
+        <div><b>✍️ Rédaction</b>Posts, e-mails, rapports ; on itère jusqu'à retrouver sa propre voix.<i>Ex. : la page « offre » d'une agence no-code.</i></div>
+        <div><b>🔎 Recherche &amp; analyse</b>Grande fenêtre de contexte : 200K+ tokens (≈ 500 pages), jusqu'à 1M selon l'offre.<i>Ex. : analyser un cahier des charges de 300 pages.</i></div>
+        <div><b>💻 Code</b>Écrire, débugger et expliquer du code dans de nombreux langages.<i>Ex. : une formule Airtable ou un script d'automatisation.</i></div>
+        <div><b>🧠 Raisonnement</b>2 modes : réponse quasi instantanée, ou <b>réflexion étendue</b> étape par étape.<i>Ex. : comparer 3 outils pour un client.</i></div>
+        <div><b>🎓 Apprentissage</b>S'adapte à ton rythme ; le <b>mode apprentissage</b> guide ton raisonnement au lieu de donner la réponse.<i>Ex. : comprendre les webhooks pas à pas.</i></div>
+      </div>
+      <p class="note">ℹ️ Les noms de modèles et les chiffres (taille de contexte, offres) évoluent vite : vérifie la version à jour sur claude.com.</p>
+    </article>
+
+    <article class="card wide" style="--c:var(--c5)">
+      <span class="num">Thème 5</span>
+      <h3>Où travailler avec Claude</h3>
+      <table class="acc">
+        <tr><th>Interface</th><th>Idéal pour</th><th>Exemple</th></tr>
+        <tr><td>Claude.ai (web, bureau, mobile)</td><td>Conversations, rédaction, recherche, analyse, création de fichiers — <b>focus du cours</b></td><td>Préparer une proposition commerciale</td></tr>
+        <tr><td>Claude Code</td><td>Outil agentique : modifie des fichiers, lance des commandes, crée des commits</td><td>Mettre à jour un site GitHub Pages</td></tr>
+        <tr><td>Claude dans Slack</td><td>Discuter avec Claude dans les canaux ou via @Claude ; recherche dans l'espace de travail</td><td>Résumer un fil de discussion d'équipe</td></tr>
+        <tr><td>Claude for Excel</td><td>Lire, analyser, modifier des classeurs ; expliquer des formules, débugger</td><td>Vérifier un tableau budgétaire</td></tr>
+      </table>
+      <div class="ex"><span class="lbl">À retenir</span>Disponible pour toutes les offres (Free, Pro, Max, Team, Enterprise) ; conversations, projets, mémoire et préférences se synchronisent sur tous tes appareils.</div>
+    </article>
+  </div>
+
+  <h2>Réflexion personnelle</h2>
+  <div class="reflect">
+    <h3>Quelles tâches de ma semaine pourraient profiter d'un partenaire de réflexion ?</h3>
+    <ul>
+      <li>Préparer un rendez-vous client : questions à poser, besoins à creuser.</li>
+      <li>Transformer des notes en spécifications claires pour une base no-code.</li>
+      <li>Relire et adapter un message de candidature à une offre.</li>
+    </ul>
+    <p class="note">Astuce du cours : demande directement à Claude de parcourir ton agenda pour repérer ces tâches.</p>
+  </div>
+
+  <h2>Quiz d'entraînement (questions originales)</h2>
+  <section class="quiz" id="quiz"></section>
+
+  <h2>Auto-test : clique pour retourner</h2>
+  <div class="flash">
+    <button class="fc"><div class="fc-in"><div class="face front">Que signifient les « 3 H » ?<small>Clique pour voir</small></div><div class="face back">Helpful, Harmless, Honest : utile, inoffensif, honnête.</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Comment s'appelle la méthode qui aligne Claude sur des valeurs ?<small>Clique pour voir</small></div><div class="face back">La Constitutional AI.</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Que veut dire « steerable » ?<small>Clique pour voir</small></div><div class="face back">Pilotable : on oriente sa personnalité, son ton et son comportement.</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Cite les 5 grandes capacités de Claude.<small>Clique pour voir</small></div><div class="face back">Rédaction · Recherche &amp; analyse · Code · Raisonnement · Apprentissage.</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Quels sont les 2 modes de réponse ?<small>Clique pour voir</small></div><div class="face back">Quasi instantané, ou réflexion étendue étape par étape.</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Cite 4 façons d'accéder à Claude.<small>Clique pour voir</small></div><div class="face back">Claude.ai (web/bureau/mobile) · Claude Code · Slack · Excel.</div></div></button>
+  </div>
+
+  <nav class="backnav"><a href="getting-started.html">← Leçon 1 : Getting started</a><a href="../../module-1.html">Module 1</a><a href="your-first-conversation.html">Leçon 3-4 : Your first conversation →</a></nav>
+  <footer>Notes de révision personnelles — exemples et quiz originaux, rédigés pour la révision</footer>
+</div>
+<script>
+document.querySelectorAll('.fc').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('on')));
+const QUIZ=[
+ {q:"Un artisan te demande la différence entre Claude et le chatbot FAQ de son site. Quelle réponse est la plus juste ?",
+  o:["Claude suit simplement un arbre de décision plus grand.","Claude est un partenaire de réflexion pilotable, capable de rédiger, analyser et raisonner.","Claude se limite à chercher des pages web.","Claude est réservé aux développeurs."],a:1,
+  w:"Un chatbot classique suit des réponses prévues d'avance ; Claude raisonne, collabore et s'adapte au ton demandé."},
+ {q:"Ton client t'envoie un cahier des charges de 300 pages à analyser d'un coup. Quelle caractéristique de Claude est décisive ?",
+  o:["Sa grande fenêtre de contexte.","Le mode apprentissage.","Son intégration à Slack.","Le mode de réponse instantanée."],a:0,
+  w:"La fenêtre de contexte (200K+ tokens ≈ 500 pages) permet de traiter de gros documents dans une seule conversation."},
+ {q:"Un comptable passe ses journées dans des classeurs et veut de l'aide sans changer d'outil. Que lui proposer ?",
+  o:["Claude Code","Claude for Excel","Claude dans Slack","Uniquement l'application mobile"],a:1,
+  w:"Claude for Excel s'ouvre en barre latérale : il lit, analyse, modifie les classeurs et explique les formules."},
+ {q:"Tu dois choisir entre 3 architectures no-code pour un client, avec des contraintes croisées. Quel mode privilégier ?",
+  o:["La réponse quasi instantanée","La réflexion étendue","Le mode apprentissage","Aucun : Claude ne raisonne pas"],a:1,
+  w:"La réflexion étendue fait travailler Claude étape par étape : idéal pour les décisions qui demandent une analyse soignée."},
+ {q:"Tu veux comprendre les webhooks par toi-même, sans recevoir la réponse toute faite. Quelle fonctionnalité utiliser ?",
+  o:["Claude Code","La réflexion étendue","Le mode apprentissage","Claude dans Slack"],a:2,
+  w:"Le mode apprentissage guide ton raisonnement au lieu de livrer la solution : il développe ton esprit critique."}
+];
+(function(){
+  const box=document.getElementById('quiz'); let good=0, answered=0;
+  box.innerHTML=QUIZ.map((x,i)=>`<div class="q" data-i="${i}"><p>${i+1}. ${x.q}</p>${x.o.map((o,j)=>`<button class="opt" data-j="${j}">${String.fromCharCode(65+j)}. ${o}</button>`).join('')}<div class="why">💡 ${x.w}</div></div>`).join('')
+    +`<div class="qscore"><div class="big" id="qs">0/${QUIZ.length}</div><span id="qmsg">Réponds aux ${QUIZ.length} questions.</span></div>`;
+  box.querySelectorAll('.q').forEach(q=>{
+    q.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{
+      if(q.classList.contains('done')) return;
+      const x=QUIZ[q.dataset.i], j=+b.dataset.j; q.classList.add('done'); answered++;
+      if(j===x.a){b.classList.add('ok');good++} else {b.classList.add('ko');q.querySelectorAll('.opt')[x.a].classList.add('ok')}
+      document.getElementById('qs').textContent=good+'/'+QUIZ.length;
+      if(answered===QUIZ.length) document.getElementById('qmsg').textContent= good===QUIZ.length?"Parfait, leçon maîtrisée 🎉": good>=3?"Bien joué ! Relis les explications des erreurs.":"Relis les thèmes 4 et 5, puis recharge la page pour réessayer.";
+    }));
+  });
+})();
+</script>
+</body>
+</html>
