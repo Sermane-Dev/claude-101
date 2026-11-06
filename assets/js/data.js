@@ -16,8 +16,10 @@ const COURSE = {
       summary: "Premiers prompts sur des cas métier réels, méthode du prompt en 3 éléments, les 4D de l'AI Fluency, itération sur les brouillons, et les modes Chat, Cowork et Code de l'application de bureau.",
       tags: ["Prompting", "4D Framework", "Itération"],
       lessons: [
-        { title: "Getting started with Claude!", type: "lecture", done: true },
-        { title: "What is Claude?", type: "lecture", done: true },
+        { title: "Getting started with Claude!", type: "lecture", done: true,
+          fiche: "fiches/module-1/getting-started.html" },
+        { title: "What is Claude?", type: "lecture", done: true,
+          fiche: "fiches/module-1/what-is-claude.html" },
         { title: "Video: Your first conversation with Claude", type: "video", done: true,
           fiche: "fiches/module-1/your-first-conversation.html" },
         { title: "Your first conversation with Claude", type: "lecture", done: true,
