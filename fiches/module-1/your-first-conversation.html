@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your first conversation with Claude — Claude 101</title>
+<link rel="icon" href="../../assets/img/datacamp-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f5f7fa; --card:#ffffff; --ink:#05192d; --muted:#5d6a78; --line:#e1e6ec;
+    --accent:#05192d; --accent-soft:#d9fde8; --green:#03ef62;
+    --c1:#05192d; --c2:#0a7d4b; --c3:#3b5bdb; --c4:#b07a00; --c5:#7048e8;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0b1724; --card:#13253a; --ink:#eef3f8; --muted:#9fb0c2; --line:#22384f; --accent:#03ef62; --accent-soft:#123a2a; --c1:#03ef62; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.55 Inter,system-ui,sans-serif}
+  .wrap{max-width:980px;margin:0 auto;padding:40px 20px 60px}
+  header{margin-bottom:28px}
+  .kicker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  h1{font-family:"Space Grotesk",Inter,sans-serif;font-size:clamp(30px,5vw,44px);line-height:1.1;margin:8px 0 10px}
+  .meta{color:var(--muted);font-size:14px;display:flex;gap:16px;flex-wrap:wrap}
+  .meta span{background:var(--card);border:1px solid var(--line);padding:4px 10px;border-radius:99px}
+  .tldr{margin-top:20px;background:var(--accent-soft);border-left:4px solid var(--green);padding:14px 18px;border-radius:8px}
+  .tldr b{color:var(--accent)}
+  h2{font-family:"Space Grotesk",Inter,sans-serif;font-size:22px;margin:38px 0 14px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  @media (max-width:680px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 20px 18px;border-top:5px solid var(--c,var(--accent));display:flex;flex-direction:column}
+  .card .num{font-size:12px;font-weight:600;color:var(--c);letter-spacing:.08em;text-transform:uppercase}
+  .card h3{font-family:"Space Grotesk",Inter,sans-serif;font-size:19px;margin:4px 0 10px;line-height:1.25}
+  .card ul{margin:0 0 12px;padding-left:18px}
+  .card li{margin:4px 0}
+  .ex{margin-top:auto;background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:10px 12px;font-size:14px}
+  .ex .lbl{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--c);margin-bottom:3px}
+  .wide{grid-column:1/-1}
+  .trio{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:6px 0 12px}
+  .trio div{background:var(--bg);border-radius:10px;padding:10px 12px;font-size:14px}
+  .trio b{display:block;color:var(--c);margin-bottom:2px}
+  mark{background:var(--accent-soft);color:inherit;padding:0 3px;border-radius:3px}
+  .flash{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .fc{perspective:900px;height:150px;cursor:pointer;border:0;background:none;padding:0;font:inherit;color:inherit;text-align:left}
+  .fc-in{position:relative;width:100%;height:100%;transition:transform .45s;transform-style:preserve-3d}
+  .fc.on .fc-in{transform:rotateY(180deg)}
+  .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;padding:16px;display:flex;flex-direction:column;justify-content:center;border:1px solid var(--line)}
+  .front{background:var(--card);font-weight:600}
+  .front small{font-weight:400;color:var(--muted);margin-top:8px;font-size:12px}
+  .back{background:#05192d;color:#fff;border-color:var(--green);transform:rotateY(180deg);font-size:14px}
+  .tip{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .tip h3{margin:0 0 8px;font-size:16px}
+  .tip ol{margin:0;padding-left:20px}
+  .topbar{background:#05192d;color:#fff}
+  .topbar .in{max-width:980px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:12px;font-size:14px}
+  .topbar img{width:28px;height:28px;border-radius:6px}
+  .topbar a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3)}
+  .topbar b{color:#03ef62}
+  .backnav{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:28px}
+  .backnav a{text-decoration:none;font-weight:600;color:var(--ink);background:var(--card);border:1px solid var(--line);padding:10px 14px;border-radius:10px}
+  footer{margin-top:40px;color:var(--muted);font-size:13px;text-align:center}
+
+  /* Impression / export PDF : pas de carte coupée entre deux pages */
+  @page{size:A4;margin:12mm}
+  @media print{
+    .topbar,.backnav{display:none}
+    :root{--bg:#fff;--card:#fff;--ink:#05192d;--muted:#555;--line:#ccc;--accent:#05192d;--accent-soft:#d9fde8}
+    body{font-size:12.5px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .wrap{max-width:none;padding:0}
+    h2{break-after:avoid;page-break-after:avoid;margin-top:22px}
+    .grid,.flash{display:block}
+    .card,.tip,.tldr,.ex,.trio div{break-inside:avoid;page-break-inside:avoid}
+    .card{margin-bottom:12px}
+    .trio{display:grid;grid-template-columns:1fr 1fr 1fr}
+    /* Flashcards : question + réponse visibles à plat */
+    .fc{display:block;height:auto;width:100%;margin-bottom:8px;break-inside:avoid;page-break-inside:avoid;perspective:none}
+    .fc-in{transform:none!important;height:auto}
+    .face{position:static;backface-visibility:visible;transform:none!important}
+    .front{border-radius:10px 10px 0 0;border-bottom:0}
+    .front small{display:none}
+    .back{border-radius:0 0 10px 10px;background:var(--accent-soft);color:var(--ink)}
+    .back::before{content:"Réponse : ";font-weight:600;color:var(--accent)}
+  }
+</style>
+</head>
+<body>
+<div class="topbar"><div class="in">
+  <img src="../../assets/img/datacamp-icon.png" alt="">
+  <a href="../../index.html">Claude 101</a> › <a href="../../module-1.html">Module 1 · Découvrir Claude</a> › <b>Fiche</b>
+</div></div>
+<div class="wrap">
+  <header>
+    <div class="kicker">Fiche de révision · Cours Claude · DataCamp</div>
+    <h1>Your first conversation with Claude</h1>
+    <div class="meta"><span>⏱ Lecture : 5 min</span><span>📚 Leçon : 20 min</span><span>🎯 4 objectifs</span></div>
+    <div class="tldr"><b>L'essentiel en une phrase :</b> parle à Claude comme à un collègue — donne-lui le <b>contexte</b>, une <b>tâche</b> claire et des <b>règles</b> de forme, ajoute des fichiers si besoin, puis <b>itère</b> jusqu'au bon résultat.</div>
+  </header>
+
+  <h2>Les 5 thèmes clés</h2>
+  <div class="grid">
+
+    <article class="card" style="--c:var(--c1)">
+      <span class="num">Thème 1</span>
+      <h3>Démarrer une conversation</h3>
+      <ul>
+        <li>Interface épurée : une zone de saisie en bas de l'écran.</li>
+        <li>Un prompt peut aller d'une simple question à une demande complexe de co-création de fichiers.</li>
+      </ul>
+      <div class="ex"><span class="lbl">Exemple</span>Simple : « Propose 10 noms de code pour une nouvelle fonctionnalité. »<br>Complexe : « Construis avec moi le cahier des charges de mon appli. »</div>
+    </article>
+
+    <article class="card" style="--c:var(--c2)">
+      <span class="num">Thème 2</span>
+      <h3>Écrire un prompt efficace</h3>
+      <ul>
+        <li>Ton <mark>naturel, concis et conversationnel</mark>, comme avec un collègue.</li>
+        <li>Le prompt + le contexte fourni déterminent la qualité de la réponse.</li>
+      </ul>
+      <div class="ex"><span class="lbl">À éviter / à préférer</span>❌ « Fais un truc sur le marketing. »<br>✅ « Rédige 3 idées de posts LinkedIn pour présenter mon agence no-code à des PME. »</div>
+    </article>
+
+    <article class="card wide" style="--c:var(--c3)">
+      <span class="num">Thème 3 · Le cœur du cours</span>
+      <h3>La méthode en 3 éléments</h3>
+      <div class="trio">
+        <div><b>1. Poser le cadre</b>Ton rôle, ton objectif, le contexte de ton travail.</div>
+        <div><b>2. Définir la tâche</b>L'action attendue : écrire, analyser, construire…</div>
+        <div><b>3. Fixer les règles</b>Style, ton, format, exemples joints.</div>
+      </div>
+      <div class="ex"><span class="lbl">Exemple du cours (décortiqué)</span>
+        <b>Cadre :</b> « Je suis responsable marketing d'une startup de streaming indé, on prépare un pitch pour des investisseurs Série A. »<br>
+        <b>Tâche :</b> « Analyse le marché du streaming de films indépendants : tendances, concurrents, opportunités. »<br>
+        <b>Règles :</b> « Recherche web récente avec sources, rapport pro de 5 pages max : synthèse, analyse marché, concurrence, opportunités. »
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin:12px 0 0">💡 Pour aller plus loin : cette méthode vient du <b>4D Framework for AI Fluency</b> (R. Dakan &amp; J. Feller) — 4 compétences : <b>Delegation, Description, Discernment, Diligence</b>.</p>
+    </article>
+
+    <article class="card" style="--c:var(--c4)">
+      <span class="num">Thème 4</span>
+      <h3>Ajouter du contexte (fichiers &amp; préférences)</h3>
+      <ul>
+        <li>Formats : <b>PDF, DOCX, CSV, TXT, PNG, JPEG</b>.</li>
+        <li>Claude lit le texte <i>et</i> le visuel (images, graphiques).</li>
+        <li>Autres sources de contexte : connecteurs, préférences perso.</li>
+        <li>Préférences globales : <i>Settings › General › « What personal preferences… »</i></li>
+      </ul>
+      <div class="ex"><span class="lbl">4 usages types</span>📄 Résumer un document · 🖼 Décrire une image · 📊 Repérer des tendances dans un tableur · 💻 Expliquer ou débugger du code</div>
+    </article>
+
+    <article class="card" style="--c:var(--c5)">
+      <span class="num">Thème 5</span>
+      <h3>Itérer sur les réponses</h3>
+      <ul>
+        <li><b>Relancer</b> : demander plus de détails ou un autre angle.</li>
+        <li><b>Donner du feedback</b> : ce qui va / ne va pas.</li>
+        <li><b>Recadrer</b> ou repartir d'un nouveau chat.</li>
+        <li>✏️ Icône crayon : modifier et renvoyer son propre message.</li>
+      </ul>
+      <div class="ex"><span class="lbl">Exemples</span>« Développe le 2ᵉ point. »<br>« Bien, mais trop formel : rends-le plus conversationnel. »<br>« En fait je parlais de X, pas de Y. »</div>
+    </article>
+
+    <article class="card wide" style="--c:var(--accent)">
+      <span class="num">Bonus</span>
+      <h3>Personnaliser Claude dans la durée</h3>
+      <div class="trio">
+        <div><b>🧠 Memory</b>Retient ton rôle, tes préférences, tes décisions — modifiable dans Settings, synchronisée sur tous tes appareils.</div>
+        <div><b>🎨 Styles</b>Choisir un style prédéfini (concis, formel, explicatif) ou créer le sien ; s'applique à toutes les conversations.</div>
+      </div>
+      <div class="ex"><span class="lbl">Exemple</span>Tu dis une fois « Je suis alternant Product Builder No-Code &amp; IA » → Claude adapte ses réponses ensuite sans que tu le répètes.</div>
+    </article>
+  </div>
+
+  <h2>Auto-test : clique pour retourner</h2>
+  <div class="flash">
+    <button class="fc"><div class="fc-in"><div class="face front">Quels sont les 3 éléments d'un bon prompt ?<small>Clique pour voir</small></div><div class="face back">Poser le cadre (rôle/objectif) · Définir la tâche · Fixer les règles (style, format).</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Quel ton adopter avec Claude ?<small>Clique pour voir</small></div><div class="face back">Comme avec un collègue : naturel, concis, conversationnel.</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Cite 4 formats de fichiers acceptés.<small>Clique pour voir</small></div><div class="face back">PDF, DOCX, CSV, TXT (+ images PNG, JPEG).</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">3 façons d'améliorer une réponse ?<small>Clique pour voir</small></div><div class="face back">Poser une question de suivi · Donner du feedback · Recadrer / nouveau chat (ou éditer avec le crayon).</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Les 4 D de l'AI Fluency ?<small>Clique pour voir</small></div><div class="face back">Delegation · Description · Discernment · Diligence.</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Memory vs Styles ?<small>Clique pour voir</small></div><div class="face back">Memory = ce que Claude sait de toi. Styles = comment Claude t'écrit.</div></div></button>
+  </div>
+
+  <h2>À pratiquer maintenant</h2>
+  <div class="tip">
+    <h3>Mini-exercice (2 min)</h3>
+    <ol>
+      <li>Écris un prompt avec les 3 éléments sur un vrai sujet (ex. : une automatisation Airtable pour une PME).</li>
+      <li>Joins un fichier si utile (CSV, PDF…).</li>
+      <li>Fais au moins 2 relances pour affiner le résultat.</li>
+    </ol>
+  </div>
+
+  <nav class="backnav"><a href="../../module-1.html">← Retour au module 1</a><a href="../../index.html">Accueil du cours</a></nav>
+  <footer>Fiche réalisée à partir de la leçon « Your first conversation with Claude » — DataCamp</footer>
+</div>
+<script>
+document.querySelectorAll('.fc').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('on')));
+</script>
+</body>
+</html>

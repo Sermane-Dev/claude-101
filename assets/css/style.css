@@ -1,0 +1,80 @@
+/* Thème commun — couleurs inspirées de DataCamp */
+:root{
+  --navy:#05192d; --green:#03ef62; --green-soft:#d9fde8;
+  --bg:#f5f7fa; --card:#ffffff; --ink:#05192d; --muted:#5d6a78; --line:#e1e6ec;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.55 Inter,system-ui,sans-serif}
+a{color:inherit}
+h1,h2,h3{font-family:"Space Grotesk",Inter,sans-serif;letter-spacing:-.01em}
+
+/* Barre du haut */
+.topbar{background:var(--navy);color:#fff}
+.topbar .in{max-width:1040px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:12px}
+.topbar img{width:30px;height:30px;border-radius:6px}
+.topbar .brand{font-weight:600;text-decoration:none}
+.topbar .brand small{font-weight:400;opacity:.7;margin-left:6px}
+.crumbs{margin-left:auto;font-size:13px;opacity:.85}
+.crumbs a{text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3)}
+
+.wrap{max-width:1040px;margin:0 auto;padding:32px 20px 60px}
+
+/* Accueil */
+.hero{display:grid;grid-template-columns:1.4fr 1fr;gap:28px;align-items:center;background:var(--navy);color:#fff;border-radius:18px;padding:32px;overflow:hidden}
+.hero .kicker{color:var(--green);font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+.hero h1{font-size:clamp(32px,5vw,48px);margin:6px 0 10px;line-height:1.05}
+.hero p{margin:0;opacity:.85;max-width:46ch}
+.hero img{width:100%;border-radius:12px;display:block}
+.global{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.stat b{display:block;font:700 26px "Space Grotesk",sans-serif}
+.stat span{color:var(--muted);font-size:13px}
+.stat.wide{grid-column:1/-1;padding:12px 16px}
+h2.sec{margin:36px 0 14px;font-size:22px}
+.modules{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.module{display:flex;flex-direction:column;gap:6px;text-decoration:none;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;transition:transform .15s,box-shadow .15s,border-color .15s}
+.module:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(5,25,45,.08);border-color:var(--green)}
+.module-top{display:flex;justify-content:space-between;align-items:center}
+.badge{background:var(--navy);color:var(--green);font-size:12px;font-weight:600;padding:3px 10px;border-radius:99px}
+.pct{font-weight:600;color:var(--muted);font-size:13px}
+.module h3{margin:6px 0 0;font-size:20px}
+.en{margin:0;color:var(--muted);font-size:13px;font-style:italic}
+.module p{margin:4px 0}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.tags span{background:var(--green-soft);font-size:12px;padding:3px 9px;border-radius:99px;font-weight:500}
+.module-foot{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-top:6px}
+.go{color:var(--navy);font-weight:600}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.bar span{display:block;height:100%;background:var(--green);border-radius:99px}
+
+/* Page module */
+.mhead{background:var(--card);border:1px solid var(--line);border-left:6px solid var(--green);border-radius:16px;padding:24px}
+.mhead h1{margin:8px 0 2px;font-size:clamp(26px,4vw,36px)}
+.mhead #m-summary{margin:12px 0 8px;max-width:70ch}
+#m-progress{margin-top:12px;max-width:420px}
+#m-progress small{color:var(--muted);display:block;margin-top:6px}
+.lessons{list-style:none;padding:0;margin:0;background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.lesson{display:grid;grid-template-columns:30px 26px 1fr auto;gap:12px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line)}
+.lesson:last-child{border-bottom:0}
+.step{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:600;background:var(--line);color:var(--muted)}
+.is-done .step{background:var(--green);color:var(--navy)}
+.ico{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--navy);color:#fff;font-size:11px}
+.pill{font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:99px;white-space:nowrap;text-decoration:none}
+.pill.ok{background:var(--green);color:var(--navy)}
+.pill.ok:hover{background:var(--navy);color:var(--green)}
+.pill.wip{background:#fff3d6;color:#8a5a00}
+.pill.todo{background:var(--bg);color:var(--muted)}
+.pager{display:flex;justify-content:space-between;gap:12px;margin-top:22px;flex-wrap:wrap}
+.pager a{text-decoration:none;font-weight:600;background:var(--card);border:1px solid var(--line);padding:10px 14px;border-radius:10px}
+.pager a:hover{border-color:var(--green)}
+
+footer{margin-top:44px;color:var(--muted);font-size:12.5px;text-align:center}
+
+@media (max-width:720px){
+  .hero{grid-template-columns:1fr}
+  .global{grid-template-columns:1fr 1fr}
+  .lesson{grid-template-columns:28px 1fr;row-gap:6px}
+  .lesson .ico{display:none}
+  .lesson .pill{grid-column:2;justify-self:start}
+  .crumbs{display:none}
+}
