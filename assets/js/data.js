@@ -30,7 +30,8 @@ const COURSE = {
           fiche: "fiches/module-1/getting-better-results.html" },
         { title: "Corporate voice, begone!", type: "exercise", done: true,
           fiche: "fiches/module-1/corporate-voice-begone.html" },
-        { title: "Claude desktop app: Chat, Cowork, Code", type: "lecture", done: false }
+        { title: "Claude desktop app: Chat, Cowork, Code", type: "lecture", done: true,
+          fiche: "fiches/module-1/claude-desktop-app.html" }
       ]
     },
     {

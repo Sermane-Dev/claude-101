@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude desktop app : Chat, Cowork, Code — Claude 101</title>
+<link rel="icon" href="../../assets/img/datacamp-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f5f7fa; --card:#ffffff; --ink:#05192d; --muted:#5d6a78; --line:#e1e6ec;
+    --accent:#05192d; --accent-soft:#d9fde8; --green:#03ef62;
+    --c1:#05192d; --c2:#0a7d4b; --c3:#3b5bdb; --c4:#b07a00; --c5:#7048e8;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0b1724; --card:#13253a; --ink:#eef3f8; --muted:#9fb0c2; --line:#22384f; --accent:#03ef62; --accent-soft:#123a2a; --c1:#03ef62; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.55 Inter,system-ui,sans-serif}
+  .wrap{max-width:980px;margin:0 auto;padding:40px 20px 60px}
+  header{margin-bottom:28px}
+  .kicker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  h1{font-family:"Space Grotesk",Inter,sans-serif;font-size:clamp(30px,5vw,44px);line-height:1.1;margin:8px 0 10px}
+  .meta{color:var(--muted);font-size:14px;display:flex;gap:16px;flex-wrap:wrap}
+  .meta span{background:var(--card);border:1px solid var(--line);padding:4px 10px;border-radius:99px}
+  .tldr{margin-top:20px;background:var(--accent-soft);border-left:4px solid var(--green);padding:14px 18px;border-radius:8px}
+  .tldr b{color:var(--accent)}
+  h2{font-family:"Space Grotesk",Inter,sans-serif;font-size:22px;margin:38px 0 14px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  @media (max-width:680px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 20px 18px;border-top:5px solid var(--c,var(--accent));display:flex;flex-direction:column}
+  .card .num{font-size:12px;font-weight:600;color:var(--c);letter-spacing:.08em;text-transform:uppercase}
+  .card h3{font-family:"Space Grotesk",Inter,sans-serif;font-size:19px;margin:4px 0 10px;line-height:1.25}
+  .card ul{margin:0 0 12px;padding-left:18px}
+  .card li{margin:4px 0}
+  .ex{margin-top:auto;background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:10px 12px;font-size:14px}
+  .ex .lbl{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--c);margin-bottom:3px}
+  .wide{grid-column:1/-1}
+  .trio{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:6px 0 12px}
+  .trio div{background:var(--bg);border-radius:10px;padding:10px 12px;font-size:14px}
+  .trio b{display:block;color:var(--c);margin-bottom:2px}
+  mark{background:var(--accent-soft);color:inherit;padding:0 3px;border-radius:3px}
+  .flash{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .fc{perspective:900px;height:150px;cursor:pointer;border:0;background:none;padding:0;font:inherit;color:inherit;text-align:left}
+  .fc-in{position:relative;width:100%;height:100%;transition:transform .45s;transform-style:preserve-3d}
+  .fc.on .fc-in{transform:rotateY(180deg)}
+  .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;padding:16px;display:flex;flex-direction:column;justify-content:center;border:1px solid var(--line)}
+  .front{background:var(--card);font-weight:600}
+  .front small{font-weight:400;color:var(--muted);margin-top:8px;font-size:12px}
+  .back{background:#05192d;color:#fff;border-color:var(--green);transform:rotateY(180deg);font-size:14px}
+  .tip{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .tip h3{margin:0 0 8px;font-size:16px}
+  .tip ol{margin:0;padding-left:20px}
+  .topbar{background:#05192d;color:#fff}
+  .topbar .in{max-width:980px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:12px;font-size:14px}
+  .topbar img{width:28px;height:28px;border-radius:6px}
+  .topbar a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3)}
+  .topbar b{color:#03ef62}
+  .backnav{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:28px}
+  .backnav a{text-decoration:none;font-weight:600;color:var(--ink);background:var(--card);border:1px solid var(--line);padding:10px 14px;border-radius:10px}
+  footer{margin-top:40px;color:var(--muted);font-size:13px;text-align:center}
+
+  /* Impression / export PDF : pas de carte coupée entre deux pages */
+  @page{size:A4;margin:12mm}
+  @media print{
+    .topbar,.backnav{display:none}
+    :root{--bg:#fff;--card:#fff;--ink:#05192d;--muted:#555;--line:#ccc;--accent:#05192d;--accent-soft:#d9fde8}
+    body{font-size:12.5px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .wrap{max-width:none;padding:0}
+    h2{break-after:avoid;page-break-after:avoid;margin-top:22px}
+    .grid,.flash{display:block}
+    .card,.tip,.tldr,.ex,.trio div{break-inside:avoid;page-break-inside:avoid}
+    .card{margin-bottom:12px}
+    .trio{display:grid;grid-template-columns:1fr 1fr 1fr}
+    /* Flashcards : question + réponse visibles à plat */
+    .fc{display:block;height:auto;width:100%;margin-bottom:8px;break-inside:avoid;page-break-inside:avoid;perspective:none}
+    .fc-in{transform:none!important;height:auto}
+    .face{position:static;backface-visibility:visible;transform:none!important}
+    .front{border-radius:10px 10px 0 0;border-bottom:0}
+    .front small{display:none}
+    .back{border-radius:0 0 10px 10px;background:var(--accent-soft);color:var(--ink)}
+    .back::before{content:"Réponse : ";font-weight:600;color:var(--accent)}
+  }
+
+
+  .five{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:6px 0 12px}
+  .five div{background:var(--bg);border-radius:10px;padding:12px;font-size:13.5px}
+  .five b{display:block;margin-bottom:4px;color:var(--c)}
+  .five i{display:block;margin-top:6px;color:var(--muted);font-style:normal;font-size:12.5px}
+  .hhh{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 12px}
+  .hhh div{background:var(--bg);border-radius:10px;padding:10px;text-align:center;font-size:13px}
+  .hhh b{display:block;font:700 22px "Space Grotesk",sans-serif;color:var(--c)}
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0 12px;font-size:14px}
+  .vs div{border-radius:10px;padding:10px 12px;background:var(--bg)}
+  .vs h4{margin:0 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:.06em}
+  .vs ul{margin:0;padding-left:16px}
+  table.acc{width:100%;border-collapse:collapse;font-size:14px;margin:6px 0 12px}
+  .acc th,.acc td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .acc th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .acc td:first-child{font-weight:600;white-space:nowrap}
+  .note{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+  /* QCM */
+  .quiz{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;border-top:5px solid var(--green)}
+  .q{margin:0 0 18px}
+  .q p{font-weight:600;margin:0 0 8px}
+  .q button.opt{display:block;width:100%;text-align:left;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;cursor:pointer}
+  .q button.opt:hover{border-color:#03ef62}
+  .q button.ok{background:#d9fde8;border-color:#03ef62}
+  .q button.ko{background:#ffe3e3;border-color:#e03131}
+  .q .why{display:none;font-size:13.5px;margin-top:6px;padding:8px 12px;border-left:3px solid #03ef62;background:var(--bg);border-radius:6px}
+  .q.done .why{display:block}
+  .qscore{display:flex;align-items:center;gap:14px;background:var(--accent-soft);border-radius:12px;padding:12px 16px;font-weight:600}
+  .qscore .big{width:72px;height:72px;border-radius:16px;background:#05192d;color:#03ef62;display:grid;place-items:center;font:700 24px "Space Grotesk",sans-serif}
+  .reflect{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .reflect h3{margin:0 0 8px;font-size:16px}
+  @media (max-width:680px){.vs,.hhh{grid-template-columns:1fr}}
+  @media print{.q .why{display:block}}
+
+  .modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:6px 0 12px}
+  .modes div{background:var(--bg);border-radius:12px;padding:14px;font-size:14px}
+  .modes b{display:block;font:700 20px "Space Grotesk",sans-serif;margin-bottom:4px;color:var(--c)}
+  .modes i{display:block;margin-top:6px;color:var(--muted);font-style:normal;font-size:12.5px}
+  .feat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:6px 0 12px}
+  .feat div{background:var(--bg);border-radius:10px;padding:10px 12px;font-size:13px}
+  .feat b{display:block;margin-bottom:2px;color:var(--c)}
+  .pill3{display:inline-block;background:#05192d;color:#03ef62;border-radius:99px;padding:2px 10px;font-size:12px;font-weight:600;margin-right:4px}
+  @media (max-width:760px){.modes,.feat{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="in">
+  <img src="../../assets/img/datacamp-icon.png" alt="">
+  <a href="../../index.html">Claude 101</a> › <a href="../../module-1.html">Module 1 · Découvrir Claude</a> › <b>Fiche</b>
+</div></div>
+<div class="wrap">
+  <header>
+    <div class="kicker">Fiche de révision · Module 1 · Leçon 8</div>
+    <h1>Claude desktop app : Chat, Cowork, Code</h1>
+    <div class="meta"><span>⏱ Lecture : 6 min</span><span>📚 Leçon : 6 min</span><span>🎯 Choisir le bon mode</span></div>
+    <div class="tldr"><b>L'essentiel en une phrase :</b> l'application de bureau offre 3 modes — <b>Chat</b> pour échanger, <b>Cowork</b> pour confier un objectif complet à un agent, <b>Code</b> pour construire du logiciel — et le bon choix dépend de l'ampleur et de la nature du travail.</div>
+  </header>
+
+  <h2>Les 5 thèmes clés</h2>
+  <div class="grid">
+
+    <article class="card wide" style="--c:var(--c1)">
+      <span class="num">Thème 1</span>
+      <h3>Les 3 modes en un coup d'œil</h3>
+      <div class="modes">
+        <div><b>💬 Chat</b>Questions, brainstorming, rédaction, aller-retour sur un problème. Le Claude de claude.ai, avec des atouts « natifs » en plus.<i>Ex. : structurer un plan de présentation.</i></div>
+        <div><b>🤝 Cowork</b>Un agent : tu donnes un objectif, tu le relies à tes outils, il fait le travail de bout en bout.<i>Ex. : une veille concurrentielle complète, avec sources.</i></div>
+        <div><b>💻 Code</b>Construire du logiciel : écrire, tester et déployer du code.<i>Ex. : faire évoluer ton site de fiches sur GitHub.</i></div>
+      </div>
+      <div class="ex"><span class="lbl">À retenir</span>Cowork et Code tournent sur le <b>même moteur</b> (Claude Code) : ils travaillent en autonomie, lancent des <b>sous-agents</b> et tiennent des tâches longues.</div>
+    </article>
+
+    <article class="card" style="--c:var(--c2)">
+      <span class="num">Thème 2</span>
+      <h3>Chat : les atouts du bureau</h3>
+      <ul>
+        <li><b>Accès rapide</b> : double appui sur Option (Mac) → une petite fenêtre Claude par-dessus ton travail.</li>
+        <li><b>Captures et partage de fenêtre</b> : Claude voit ce que tu vois (Mac).</li>
+        <li><b>Dictée</b> : parler plutôt que taper (Mac).</li>
+        <li><b>Connecteurs de bureau</b> : relier des outils locaux.</li>
+      </ul>
+      <div class="ex"><span class="lbl">Exemple</span>Tu ouvres un tableau de bord Airtable inconnu : capture de la fenêtre + « que signifient ces indicateurs ? », sans quitter l'écran.</div>
+    </article>
+
+    <article class="card" style="--c:var(--c4)">
+      <span class="num">Thème 3</span>
+      <h3>Code : construire du logiciel</h3>
+      <ul>
+        <li>Lit, écrit et modifie le code, lance des commandes ; <b>diffs visuels</b>, terminal intégré, <b>git</b> pour revenir en arrière.</li>
+        <li><b>Local</b> : un dossier de ton ordinateur, aperçu dans le navigateur. <b>Remote</b> : un dépôt GitHub dans le cloud, la session continue même app fermée.</li>
+        <li>3 niveaux d'autonomie : <span class="pill3">Ask</span> valide chaque changement · <span class="pill3">Code</span> applique, demande avant les commandes · <span class="pill3">Plan</span> présente sa stratégie d'abord.</li>
+      </ul>
+      <div class="ex"><span class="lbl">Exemple vécu</span>Ajouter une fiche à ton site, mettre à jour <code>data.js</code> et faire le commit sur GitHub : c'est exactement un travail « Remote ».</div>
+    </article>
+
+    <article class="card wide" style="--c:var(--c3)">
+      <span class="num">Thème 4</span>
+      <h3>Cowork : confier un vrai chantier</h3>
+      <p style="margin:0 0 8px">Pour le travail qui demande un vrai effort : rassembler plusieurs sources, leur donner du sens, livrer un résultat fini. Claude pose d'abord quelques questions (périmètre, format, contraintes), propose un <b>plan visible</b>, puis avance ; on peut lancer <b>plusieurs tâches</b> en parallèle.</p>
+      <div class="feat">
+        <div><b>📁 Accès dossier</b>Lit un dossier de ton ordinateur et y enregistre le résultat.</div>
+        <div><b>⏰ Tâches planifiées</b>Un travail récurrent (briefing du matin, bilan hebdo) lancé automatiquement.</div>
+        <div><b>🧩 Sous-agents</b>Découpe une grosse tâche en parties traitées en parallèle.</div>
+        <div><b>📱 Dispatch</b>Continuer depuis le téléphone, ordinateur allumé et app ouverte.</div>
+        <div><b>🗂 Projets</b>Espaces dédiés avec fichiers, instructions et mémoire, stockés en local.</div>
+        <div><b>🌐 Navigation</b>Avec Claude in Chrome : visiter des sites, relever des prix, extraire des données.</div>
+        <div><b>🖱 Computer use</b>Utilise l'ordinateur comme toi ; ordre de priorité : connecteurs → Chrome → écran. Autorisation demandée par app.</div>
+        <div><b>🔌 Plugins</b>Ajoutent des capacités : données financières, base interne, conformité.</div>
+        <div><b>🔒 Environnement protégé</b>Accès limité aux seuls dossiers que tu partages.</div>
+      </div>
+      <div class="ex"><span class="lbl">Exemples d'usage</span>Lire 50 documents de projet et en tirer une note de synthèse · comparer 10 outils no-code avec leurs prix et sources · préparer chaque matin un point sur tes candidatures en cours.</div>
+    </article>
+
+    <article class="card wide" style="--c:var(--c5)">
+      <span class="num">Thème 5</span>
+      <h3>Choisir le bon mode</h3>
+      <table class="acc">
+        <tr><th>Si tu veux…</th><th>Mode</th><th>Pourquoi</th></tr>
+        <tr><td>Poser une question, réfléchir à voix haute, rédiger</td><td>Chat</td><td>Échange rapide, aller-retour</td></tr>
+        <tr><td>Un livrable fini à partir de nombreuses sources</td><td>Cowork</td><td>Plan, sous-agents, accès aux dossiers et outils</td></tr>
+        <tr><td>Une tâche qui revient chaque jour ou chaque semaine</td><td>Cowork</td><td>Tâches planifiées</td></tr>
+        <tr><td>Créer, corriger ou déployer du code</td><td>Code</td><td>Diffs, terminal, git</td></tr>
+      </table>
+      <p class="note">ℹ️ Cowork et Code sont proposés sur les offres Pro, Max, Team et Enterprise ; certaines fonctions (computer use, raccourcis) sont en aperçu ou réservées au Mac. Les noms et l'interface évoluent vite : vérifie la version à jour.</p>
+    </article>
+  </div>
+
+  <h2>Réflexion personnelle</h2>
+  <div class="reflect">
+    <h3>Quel mode pour mes tâches habituelles ?</h3>
+    <ul>
+      <li><b>Chat</b> : préparer une lettre de motivation, comprendre une notion de cours.</li>
+      <li><b>Cowork</b> : analyser 20 offres d'alternance et sortir un tableau comparatif sourcé ; un point quotidien sur mes candidatures.</li>
+      <li><b>Code</b> : faire évoluer le site de fiches Claude 101 ou mes fiches d'arabe sur GitHub Pages.</li>
+    </ul>
+  </div>
+
+  <h2>Quiz d'entraînement (questions originales)</h2>
+  <section class="quiz" id="quiz"></section>
+
+  <h2>Auto-test : clique pour retourner</h2>
+  <div class="flash">
+    <button class="fc"><div class="fc-in"><div class="face front">Les 3 modes de l'application de bureau ?<small>Clique pour voir</small></div><div class="face back">Chat (échanger) · Cowork (confier un objectif) · Code (construire du logiciel).</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Quel moteur partagent Cowork et Code ?<small>Clique pour voir</small></div><div class="face back">Claude Code : autonomie, sous-agents, tâches longues.</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Ordre de priorité du computer use ?<small>Clique pour voir</small></div><div class="face back">Connecteurs → Chrome → interaction avec l'écran.</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Local ou Remote dans Code ?<small>Clique pour voir</small></div><div class="face back">Local : un dossier de ton ordi. Remote : un dépôt GitHub dans le cloud, la session continue app fermée.</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Ask, Code, Plan : la différence ?<small>Clique pour voir</small></div><div class="face back">Ask : tu valides chaque changement. Code : changements auto, validation avant les commandes. Plan : stratégie présentée avant d'agir.</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Qu'est-ce que Dispatch ?<small>Clique pour voir</small></div><div class="face back">Continuer ses tâches Cowork depuis le téléphone, ordinateur allumé et app ouverte.</div></div></button>
+  </div>
+
+  <nav class="backnav"><a href="corporate-voice-begone.html">← Leçon 7 : Corporate voice, begone!</a><a href="../../module-1.html">Module 1</a><a href="../../index.html">Accueil · Module 2 →</a></nav>
+  <footer>Notes de révision personnelles — exemples et quiz originaux, rédigés pour la révision</footer>
+</div>
+<script>
+document.querySelectorAll('.fc').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('on')));
+const QUIZ=[
+ {q:"Tu veux qu'un rapport sur tes candidatures en cours soit prêt chaque lundi matin, sans rien relancer. Quel mode ?",
+  o:["Chat","Cowork, avec une tâche planifiée","Code en mode Ask","Aucun : c'est impossible"],a:1,
+  w:"Les tâches planifiées de Cowork exécutent un travail récurrent automatiquement."},
+ {q:"Tu bloques sur une formule Airtable et tu veux juste une explication rapide. Quel mode ?",
+  o:["Chat","Cowork","Code en mode Plan","Dispatch"],a:0,
+  w:"Une question ponctuelle avec des allers-retours : c'est le rôle de Chat."},
+ {q:"Tu veux comparer 10 outils d'automatisation (prix, fonctions, avis) dans un tableau sourcé. Quel mode ?",
+  o:["Chat","Cowork","Code","La dictée"],a:1,
+  w:"Plusieurs sources à visiter et un livrable fini : Cowork, avec navigation et sous-agents."},
+ {q:"Dans Code, tu veux voir toute la stratégie de Claude avant qu'il touche à un seul fichier. Quel mode d'interaction ?",
+  o:["Ask","Code","Plan","Remote"],a:2,
+  w:"Le mode Plan présente l'approche complète avant toute modification."},
+ {q:"Tu lances une grosse modification de ton dépôt GitHub et tu veux pouvoir fermer l'application. Quel environnement ?",
+  o:["Local","Remote","Chat","Computer use"],a:1,
+  w:"En Remote, la session tourne dans le cloud et continue même application fermée."}
+];
+(function(){
+  const box=document.getElementById('quiz'); let good=0, answered=0;
+  box.innerHTML=QUIZ.map((x,i)=>`<div class="q" data-i="${i}"><p>${i+1}. ${x.q}</p>${x.o.map((o,j)=>`<button class="opt" data-j="${j}">${String.fromCharCode(65+j)}. ${o}</button>`).join('')}<div class="why">💡 ${x.w}</div></div>`).join('')
+    +`<div class="qscore"><div class="big" id="qs">0/${QUIZ.length}</div><span id="qmsg">Réponds aux ${QUIZ.length} questions.</span></div>`;
+  box.querySelectorAll('.q').forEach(q=>{
+    q.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{
+      if(q.classList.contains('done')) return;
+      const x=QUIZ[q.dataset.i], j=+b.dataset.j; q.classList.add('done'); answered++;
+      if(j===x.a){b.classList.add('ok');good++} else {b.classList.add('ko');q.querySelectorAll('.opt')[x.a].classList.add('ok')}
+      document.getElementById('qs').textContent=good+'/'+QUIZ.length;
+      if(answered===QUIZ.length) document.getElementById('qmsg').textContent= good===QUIZ.length?"Parfait, module 1 bouclé 🎉": good>=3?"Bien joué ! Relis les explications des erreurs.":"Relis le thème 5, puis recharge la page pour réessayer.";
+    }));
+  });
+})();
+</script>
+</body>
+</html>
