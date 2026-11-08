@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The headline, not the novel — Claude 101</title>
+<link rel="icon" href="../../assets/img/datacamp-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f5f7fa; --card:#ffffff; --ink:#05192d; --muted:#5d6a78; --line:#e1e6ec;
+    --accent:#05192d; --accent-soft:#d9fde8; --green:#03ef62;
+    --c1:#05192d; --c2:#0a7d4b; --c3:#3b5bdb; --c4:#b07a00; --c5:#7048e8;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0b1724; --card:#13253a; --ink:#eef3f8; --muted:#9fb0c2; --line:#22384f; --accent:#03ef62; --accent-soft:#123a2a; --c1:#03ef62; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.55 Inter,system-ui,sans-serif}
+  .wrap{max-width:980px;margin:0 auto;padding:40px 20px 60px}
+  header{margin-bottom:28px}
+  .kicker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  h1{font-family:"Space Grotesk",Inter,sans-serif;font-size:clamp(30px,5vw,44px);line-height:1.1;margin:8px 0 10px}
+  .meta{color:var(--muted);font-size:14px;display:flex;gap:16px;flex-wrap:wrap}
+  .meta span{background:var(--card);border:1px solid var(--line);padding:4px 10px;border-radius:99px}
+  .tldr{margin-top:20px;background:var(--accent-soft);border-left:4px solid var(--green);padding:14px 18px;border-radius:8px}
+  .tldr b{color:var(--accent)}
+  h2{font-family:"Space Grotesk",Inter,sans-serif;font-size:22px;margin:38px 0 14px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  @media (max-width:680px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 20px 18px;border-top:5px solid var(--c,var(--accent));display:flex;flex-direction:column}
+  .card .num{font-size:12px;font-weight:600;color:var(--c);letter-spacing:.08em;text-transform:uppercase}
+  .card h3{font-family:"Space Grotesk",Inter,sans-serif;font-size:19px;margin:4px 0 10px;line-height:1.25}
+  .card ul{margin:0 0 12px;padding-left:18px}
+  .card li{margin:4px 0}
+  .ex{margin-top:auto;background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:10px 12px;font-size:14px}
+  .ex .lbl{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--c);margin-bottom:3px}
+  .wide{grid-column:1/-1}
+  .trio{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:6px 0 12px}
+  .trio div{background:var(--bg);border-radius:10px;padding:10px 12px;font-size:14px}
+  .trio b{display:block;color:var(--c);margin-bottom:2px}
+  mark{background:var(--accent-soft);color:inherit;padding:0 3px;border-radius:3px}
+  .flash{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .fc{perspective:900px;height:150px;cursor:pointer;border:0;background:none;padding:0;font:inherit;color:inherit;text-align:left}
+  .fc-in{position:relative;width:100%;height:100%;transition:transform .45s;transform-style:preserve-3d}
+  .fc.on .fc-in{transform:rotateY(180deg)}
+  .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;padding:16px;display:flex;flex-direction:column;justify-content:center;border:1px solid var(--line)}
+  .front{background:var(--card);font-weight:600}
+  .front small{font-weight:400;color:var(--muted);margin-top:8px;font-size:12px}
+  .back{background:#05192d;color:#fff;border-color:var(--green);transform:rotateY(180deg);font-size:14px}
+  .tip{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .tip h3{margin:0 0 8px;font-size:16px}
+  .tip ol{margin:0;padding-left:20px}
+  .topbar{background:#05192d;color:#fff}
+  .topbar .in{max-width:980px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:12px;font-size:14px}
+  .topbar img{width:28px;height:28px;border-radius:6px}
+  .topbar a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3)}
+  .topbar b{color:#03ef62}
+  .backnav{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:28px}
+  .backnav a{text-decoration:none;font-weight:600;color:var(--ink);background:var(--card);border:1px solid var(--line);padding:10px 14px;border-radius:10px}
+  footer{margin-top:40px;color:var(--muted);font-size:13px;text-align:center}
+
+  /* Impression / export PDF : pas de carte coupée entre deux pages */
+  @page{size:A4;margin:12mm}
+  @media print{
+    .topbar,.backnav{display:none}
+    :root{--bg:#fff;--card:#fff;--ink:#05192d;--muted:#555;--line:#ccc;--accent:#05192d;--accent-soft:#d9fde8}
+    body{font-size:12.5px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .wrap{max-width:none;padding:0}
+    h2{break-after:avoid;page-break-after:avoid;margin-top:22px}
+    .grid,.flash{display:block}
+    .card,.tip,.tldr,.ex,.trio div{break-inside:avoid;page-break-inside:avoid}
+    .card{margin-bottom:12px}
+    .trio{display:grid;grid-template-columns:1fr 1fr 1fr}
+    /* Flashcards : question + réponse visibles à plat */
+    .fc{display:block;height:auto;width:100%;margin-bottom:8px;break-inside:avoid;page-break-inside:avoid;perspective:none}
+    .fc-in{transform:none!important;height:auto}
+    .face{position:static;backface-visibility:visible;transform:none!important}
+    .front{border-radius:10px 10px 0 0;border-bottom:0}
+    .front small{display:none}
+    .back{border-radius:0 0 10px 10px;background:var(--accent-soft);color:var(--ink)}
+    .back::before{content:"Réponse : ";font-weight:600;color:var(--accent)}
+  }
+
+  /* Exercice auto-évalué */
+  .lab{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;border-top:5px solid var(--green)}
+  .lab h3{font-family:"Space Grotesk",Inter,sans-serif;margin:0 0 6px;font-size:19px}
+  .lab .brief{background:var(--bg);border-radius:10px;padding:12px 14px;margin:10px 0 14px;font-size:14.5px}
+  .lab textarea{width:100%;min-height:96px;border:1px solid var(--line);border-radius:10px;padding:12px;font:inherit;background:var(--bg);color:var(--ink);resize:vertical}
+  .crit{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin:14px 0}
+  .crit fieldset{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:0}
+  .crit legend{font-weight:600;font-size:13px;padding:0 6px;text-transform:uppercase;letter-spacing:.06em}
+  .crit label{display:flex;gap:8px;align-items:flex-start;margin:6px 0;font-size:14px;cursor:pointer}
+  .crit input{margin-top:3px;accent-color:#03ef62}
+  .score{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;background:var(--accent-soft);border-radius:12px;padding:14px 16px}
+  .big{width:86px;height:86px;border-radius:18px;background:#05192d;color:#03ef62;display:grid;place-items:center;font:700 28px "Space Grotesk",sans-serif;line-height:1;text-align:center}
+  .big small{display:block;font-size:12px;color:#fff;font-weight:500}
+  .meter{display:grid;grid-template-columns:90px 1fr 44px;gap:10px;align-items:center;font-size:13px;margin:4px 0}
+  .meter .t{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+  .meter .t span{display:block;height:100%;width:0;background:#05192d;transition:width .3s}
+  .meter.bonus .t span{background:#03ef62}
+  #fb{margin:8px 0 0;font-size:14px}
+  .road{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:6px 0 12px}
+  .road div{background:var(--bg);border-radius:10px;padding:10px;font-size:13px;text-align:center}
+  .road b{display:block;font-size:18px;color:var(--c)}
+  .loop{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:6px 0 12px;font-weight:600}
+  .loop span{background:var(--bg);padding:8px 14px;border-radius:99px}
+  @media (max-width:680px){.road{grid-template-columns:1fr 1fr}}
+  @media print{ .lab textarea{min-height:60px} }
+
+  .mail{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13.5px;line-height:1.5}
+  .mail b{display:block}
+  .checks{list-style:none;padding:0;margin:0 0 12px}
+  .checks li{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
+  .checks li span{flex:none;width:22px;height:22px;border-radius:6px;background:var(--accent-soft);display:grid;place-items:center;font-size:13px;font-weight:700;color:#0a7d4b}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="in">
+  <img src="../../assets/img/datacamp-icon.png" alt="">
+  <a href="../../index.html">Claude 101</a> › <a href="../../module-1.html">Module 1 · Découvrir Claude</a> › <b>Fiche</b>
+</div></div>
+<div class="wrap">
+  <header>
+    <div class="kicker">Fiche de révision · Module 1 · Leçon 5</div>
+    <h1>The headline, not the novel</h1>
+    <div class="meta"><span>⏱ Lecture : 4 min</span><span>🧪 Leçon pratique</span><span>🎯 Obtenir une synthèse courte et ciblée</span></div>
+    <div class="tldr"><b>L'essentiel en une phrase :</b> pour une synthèse utile, demande <b>le titre, pas le roman</b> — applique la méthode <b>Cadre · Tâche · Règles</b>, fixe une <b>limite de longueur</b> et un <b>ton</b>, puis <b>relis</b> la réponse avant de l'envoyer.</div>
+  </header>
+
+  <h2>Les 4 thèmes clés</h2>
+  <div class="grid">
+
+    <article class="card" style="--c:var(--c1)">
+      <span class="num">Thème 1</span>
+      <h3>Le titre, pas le roman</h3>
+      <ul>
+        <li>Un décideur lit vite : il veut <b>le message clé d'abord</b>, les détails seulement s'il les demande.</li>
+        <li>Sans consigne, une IA a tendance à trop en dire. C'est à toi de demander l'essentiel.</li>
+      </ul>
+      <div class="ex"><span class="lbl">Exemple</span>❌ Un compte rendu de 2 pages sur le trimestre.<br>✅ 2 résultats clés + 1 prochaine étape, lisibles en 30 secondes.</div>
+    </article>
+
+    <article class="card" style="--c:var(--c2)">
+      <span class="num">Thème 2</span>
+      <h3>Les 3 éléments appliqués à une synthèse</h3>
+      <ul>
+        <li><b>Cadre</b> : ton rôle, ta structure, les faits à résumer.</li>
+        <li><b>Tâche</b> : le livrable précis et son destinataire.</li>
+        <li><b>Règles</b> : ton, longueur, format.</li>
+      </ul>
+      <div class="ex"><span class="lbl">Exemple (scénario original)</span><b>Cadre :</b> « Je suis trésorier d'un club de basket. Ce trimestre : +40 adhérents et une subvention de la mairie obtenue. »<br><b>Tâche :</b> « Rédige un e-mail de synthèse pour le bureau du club. »<br><b>Règles :</b> « Ton cordial et pro, 120 mots maximum. »</div>
+    </article>
+
+    <article class="card" style="--c:var(--c3)">
+      <span class="num">Thème 3</span>
+      <h3>Les règles qui font la concision</h3>
+      <ul>
+        <li><b>Longueur</b> : un nombre de mots ou de lignes maximum.</li>
+        <li><b>Ton</b> : professionnel, cordial, direct…</li>
+        <li><b>Format</b> : objet, puces, une phrase de conclusion.</li>
+        <li><b>Destinataire</b> : il change le vocabulaire et le niveau de détail.</li>
+      </ul>
+      <div class="ex"><span class="lbl">Règle bonus</span>« Commence par la conclusion, puis 3 puces maximum. »</div>
+    </article>
+
+    <article class="card" style="--c:var(--c5)">
+      <span class="num">Thème 4</span>
+      <h3>Relire avant d'envoyer</h3>
+      <ul class="checks">
+        <li><span>1</span><div>Les <b>crochets</b> à compléter : [Votre nom], [trimestre]…</div></li>
+        <li><span>2</span><div>Les <b>faits ajoutés</b> que tu n'as pas fournis (une comparaison, une date) : à vérifier ou supprimer.</div></li>
+        <li><span>3</span><div>La <b>longueur</b> : la limite est-elle respectée ?</div></li>
+      </ul>
+      <div class="ex"><span class="lbl">Relance type</span>« Remplace les crochets par mes infos, retire tout fait que je n'ai pas donné, et reste sous 120 mots. »</div>
+    </article>
+  </div>
+
+  <h2>Exercice d'entraînement auto-évalué</h2>
+  <section class="lab">
+    <h3>À toi de jouer</h3>
+    <div class="brief"><b>Mise en situation :</b> tu es chef de projet dans une petite agence web. Le mois se termine : le nouveau site d'un client a été livré à temps et le formulaire de contact a doublé le nombre de demandes reçues. Ton client attend un point d'étape. Écris un prompt pour que Claude rédige cet e-mail, puis coche honnêtement ce qu'il contient.</div>
+    <textarea id="prompt" placeholder="Écris ton prompt ici (il reste sur ta page, rien n'est envoyé)…"></textarea>
+    <div class="crit">
+      <fieldset><legend>Cadre</legend>
+        <label><input type="checkbox" data-g="a"> Je donne mon rôle et ma structure</label>
+        <label><input type="checkbox" data-g="a"> Je fournis les faits à résumer</label>
+      </fieldset>
+      <fieldset><legend>Tâche</legend>
+        <label><input type="checkbox" data-g="b"> Je précise le livrable (un e-mail de synthèse)</label>
+        <label><input type="checkbox" data-g="b"> Je nomme le destinataire (le client)</label>
+      </fieldset>
+      <fieldset><legend>Règles</legend>
+        <label><input type="checkbox" data-g="c"> Je fixe le ton</label>
+        <label><input type="checkbox" data-g="c"> Je fixe une longueur maximale</label>
+      </fieldset>
+    </div>
+    <div class="score">
+      <div class="big" id="total">0<small>/100</small></div>
+      <div>
+        <div class="meter"><span>Cadre</span><div class="t"><span id="m-a"></span></div><span id="p-a">0%</span></div>
+        <div class="meter"><span>Tâche</span><div class="t"><span id="m-b"></span></div><span id="p-b">0%</span></div>
+        <div class="meter bonus"><span>Règles</span><div class="t"><span id="m-c"></span></div><span id="p-c">0%</span></div>
+        <p id="fb">Coche les critères présents dans ton prompt.</p>
+      </div>
+    </div>
+  </section>
+
+  <h2>Auto-test : clique pour retourner</h2>
+  <div class="flash">
+    <button class="fc"><div class="fc-in"><div class="face front">Que veut dire « le titre, pas le roman » ?<small>Clique pour voir</small></div><div class="face back">Donner le message clé d'abord ; les détails seulement sur demande.</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Les 3 éléments d'un prompt de synthèse ?<small>Clique pour voir</small></div><div class="face back">Cadre (rôle + faits) · Tâche (livrable + destinataire) · Règles (ton, longueur, format).</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Quelle règle rend une réponse concise ?<small>Clique pour voir</small></div><div class="face back">Une limite de longueur explicite : « 120 mots maximum ».</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">3 points à relire avant d'envoyer ?<small>Clique pour voir</small></div><div class="face back">Les crochets à compléter · les faits ajoutés non fournis · le respect de la longueur.</div></div></button>
+  </div>
+
+  <nav class="backnav"><a href="your-first-conversation.html">← Leçon 3-4 : Your first conversation</a><a href="../../module-1.html">Module 1</a></nav>
+  <footer>Notes de révision personnelles — exemples et exercice originaux, rédigés pour la révision</footer>
+</div>
+<script>
+document.querySelectorAll('.fc').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('on')));
+(function(){
+  const boxes=[...document.querySelectorAll('.crit input')];
+  const pct=g=>{const b=boxes.filter(x=>x.dataset.g===g);return Math.round(100*b.filter(x=>x.checked).length/b.length)};
+  function upd(){
+    const a=pct('a'),b=pct('b'),c=pct('c');
+    [['a',a],['b',b],['c',c]].forEach(([g,v])=>{document.getElementById('m-'+g).style.width=v+'%';document.getElementById('p-'+g).textContent=v+'%'});
+    const total=Math.round((a+b+c)/3);
+    document.getElementById('total').innerHTML=total+'<small>/100</small>';
+    let fb;
+    if(a<100) fb="Pose le cadre : ton rôle, ta structure et les faits à résumer.";
+    else if(b<100) fb="Précise la tâche : quel livrable, pour quel destinataire ?";
+    else if(c<100) fb="Ajoute des règles : le ton et une longueur maximale.";
+    else fb="Prompt complet 🎉 Teste-le dans Claude, puis relis la réponse avec la checklist du thème 4.";
+    document.getElementById('fb').textContent=fb;
+  }
+  boxes.forEach(b=>b.addEventListener('change',upd));
+})();
+</script>
+</body>
+</html>

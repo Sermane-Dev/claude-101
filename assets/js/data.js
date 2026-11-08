@@ -24,7 +24,8 @@ const COURSE = {
           fiche: "fiches/module-1/your-first-conversation.html" },
         { title: "Your first conversation with Claude", type: "lecture", done: true,
           fiche: "fiches/module-1/your-first-conversation.html" },
-        { title: "The headline, not the novel", type: "lecture", done: false },
+        { title: "The headline, not the novel", type: "exercise", done: true,
+          fiche: "fiches/module-1/the-headline-not-the-novel.html" },
         { title: "Getting better results", type: "lecture", done: false },
         { title: "Corporate voice, begone!", type: "lecture", done: false },
         { title: "Claude desktop app: Chat, Cowork, Code", type: "lecture", done: false }
