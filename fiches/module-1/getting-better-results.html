@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Getting better results — Claude 101</title>
+<link rel="icon" href="../../assets/img/datacamp-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f5f7fa; --card:#ffffff; --ink:#05192d; --muted:#5d6a78; --line:#e1e6ec;
+    --accent:#05192d; --accent-soft:#d9fde8; --green:#03ef62;
+    --c1:#05192d; --c2:#0a7d4b; --c3:#3b5bdb; --c4:#b07a00; --c5:#7048e8;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0b1724; --card:#13253a; --ink:#eef3f8; --muted:#9fb0c2; --line:#22384f; --accent:#03ef62; --accent-soft:#123a2a; --c1:#03ef62; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.55 Inter,system-ui,sans-serif}
+  .wrap{max-width:980px;margin:0 auto;padding:40px 20px 60px}
+  header{margin-bottom:28px}
+  .kicker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  h1{font-family:"Space Grotesk",Inter,sans-serif;font-size:clamp(30px,5vw,44px);line-height:1.1;margin:8px 0 10px}
+  .meta{color:var(--muted);font-size:14px;display:flex;gap:16px;flex-wrap:wrap}
+  .meta span{background:var(--card);border:1px solid var(--line);padding:4px 10px;border-radius:99px}
+  .tldr{margin-top:20px;background:var(--accent-soft);border-left:4px solid var(--green);padding:14px 18px;border-radius:8px}
+  .tldr b{color:var(--accent)}
+  h2{font-family:"Space Grotesk",Inter,sans-serif;font-size:22px;margin:38px 0 14px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  @media (max-width:680px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 20px 18px;border-top:5px solid var(--c,var(--accent));display:flex;flex-direction:column}
+  .card .num{font-size:12px;font-weight:600;color:var(--c);letter-spacing:.08em;text-transform:uppercase}
+  .card h3{font-family:"Space Grotesk",Inter,sans-serif;font-size:19px;margin:4px 0 10px;line-height:1.25}
+  .card ul{margin:0 0 12px;padding-left:18px}
+  .card li{margin:4px 0}
+  .ex{margin-top:auto;background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:10px 12px;font-size:14px}
+  .ex .lbl{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--c);margin-bottom:3px}
+  .wide{grid-column:1/-1}
+  .trio{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:6px 0 12px}
+  .trio div{background:var(--bg);border-radius:10px;padding:10px 12px;font-size:14px}
+  .trio b{display:block;color:var(--c);margin-bottom:2px}
+  mark{background:var(--accent-soft);color:inherit;padding:0 3px;border-radius:3px}
+  .flash{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .fc{perspective:900px;height:150px;cursor:pointer;border:0;background:none;padding:0;font:inherit;color:inherit;text-align:left}
+  .fc-in{position:relative;width:100%;height:100%;transition:transform .45s;transform-style:preserve-3d}
+  .fc.on .fc-in{transform:rotateY(180deg)}
+  .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;padding:16px;display:flex;flex-direction:column;justify-content:center;border:1px solid var(--line)}
+  .front{background:var(--card);font-weight:600}
+  .front small{font-weight:400;color:var(--muted);margin-top:8px;font-size:12px}
+  .back{background:#05192d;color:#fff;border-color:var(--green);transform:rotateY(180deg);font-size:14px}
+  .tip{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .tip h3{margin:0 0 8px;font-size:16px}
+  .tip ol{margin:0;padding-left:20px}
+  .topbar{background:#05192d;color:#fff}
+  .topbar .in{max-width:980px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:12px;font-size:14px}
+  .topbar img{width:28px;height:28px;border-radius:6px}
+  .topbar a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3)}
+  .topbar b{color:#03ef62}
+  .backnav{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:28px}
+  .backnav a{text-decoration:none;font-weight:600;color:var(--ink);background:var(--card);border:1px solid var(--line);padding:10px 14px;border-radius:10px}
+  footer{margin-top:40px;color:var(--muted);font-size:13px;text-align:center}
+
+  /* Impression / export PDF : pas de carte coupée entre deux pages */
+  @page{size:A4;margin:12mm}
+  @media print{
+    .topbar,.backnav{display:none}
+    :root{--bg:#fff;--card:#fff;--ink:#05192d;--muted:#555;--line:#ccc;--accent:#05192d;--accent-soft:#d9fde8}
+    body{font-size:12.5px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .wrap{max-width:none;padding:0}
+    h2{break-after:avoid;page-break-after:avoid;margin-top:22px}
+    .grid,.flash{display:block}
+    .card,.tip,.tldr,.ex,.trio div{break-inside:avoid;page-break-inside:avoid}
+    .card{margin-bottom:12px}
+    .trio{display:grid;grid-template-columns:1fr 1fr 1fr}
+    /* Flashcards : question + réponse visibles à plat */
+    .fc{display:block;height:auto;width:100%;margin-bottom:8px;break-inside:avoid;page-break-inside:avoid;perspective:none}
+    .fc-in{transform:none!important;height:auto}
+    .face{position:static;backface-visibility:visible;transform:none!important}
+    .front{border-radius:10px 10px 0 0;border-bottom:0}
+    .front small{display:none}
+    .back{border-radius:0 0 10px 10px;background:var(--accent-soft);color:var(--ink)}
+    .back::before{content:"Réponse : ";font-weight:600;color:var(--accent)}
+  }
+
+
+  .five{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:6px 0 12px}
+  .five div{background:var(--bg);border-radius:10px;padding:12px;font-size:13.5px}
+  .five b{display:block;margin-bottom:4px;color:var(--c)}
+  .five i{display:block;margin-top:6px;color:var(--muted);font-style:normal;font-size:12.5px}
+  .hhh{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 12px}
+  .hhh div{background:var(--bg);border-radius:10px;padding:10px;text-align:center;font-size:13px}
+  .hhh b{display:block;font:700 22px "Space Grotesk",sans-serif;color:var(--c)}
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0 12px;font-size:14px}
+  .vs div{border-radius:10px;padding:10px 12px;background:var(--bg)}
+  .vs h4{margin:0 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:.06em}
+  .vs ul{margin:0;padding-left:16px}
+  table.acc{width:100%;border-collapse:collapse;font-size:14px;margin:6px 0 12px}
+  .acc th,.acc td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .acc th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .acc td:first-child{font-weight:600;white-space:nowrap}
+  .note{font-size:12.5px;color:var(--muted);margin:8px 0 0}
+  /* QCM */
+  .quiz{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;border-top:5px solid var(--green)}
+  .q{margin:0 0 18px}
+  .q p{font-weight:600;margin:0 0 8px}
+  .q button.opt{display:block;width:100%;text-align:left;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;cursor:pointer}
+  .q button.opt:hover{border-color:#03ef62}
+  .q button.ok{background:#d9fde8;border-color:#03ef62}
+  .q button.ko{background:#ffe3e3;border-color:#e03131}
+  .q .why{display:none;font-size:13.5px;margin-top:6px;padding:8px 12px;border-left:3px solid #03ef62;background:var(--bg);border-radius:6px}
+  .q.done .why{display:block}
+  .qscore{display:flex;align-items:center;gap:14px;background:var(--accent-soft);border-radius:12px;padding:12px 16px;font-weight:600}
+  .qscore .big{width:72px;height:72px;border-radius:16px;background:#05192d;color:#03ef62;display:grid;place-items:center;font:700 24px "Space Grotesk",sans-serif}
+  .reflect{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .reflect h3{margin:0 0 8px;font-size:16px}
+  @media (max-width:680px){.vs,.hhh{grid-template-columns:1fr}}
+  @media print{.q .why{display:block}}
+
+  .d4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:6px 0 12px}
+  .d4 div{background:var(--bg);border-radius:10px;padding:12px;font-size:13.5px}
+  .d4 b{display:block;font:700 17px "Space Grotesk",sans-serif;color:var(--c);margin-bottom:4px}
+  .d4 i{display:block;margin-top:6px;color:var(--muted);font-style:normal;font-size:12.5px}
+  .steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:6px 0 12px}
+  .steps div{background:var(--bg);border-radius:10px;padding:12px;font-size:13.5px;position:relative}
+  .steps b{display:flex;gap:8px;align-items:center;margin-bottom:4px}
+  .steps b span{width:24px;height:24px;border-radius:50%;background:#05192d;color:#03ef62;display:grid;place-items:center;font-size:12px;flex:none}
+  @media (max-width:760px){.d4,.steps{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="in">
+  <img src="../../assets/img/datacamp-icon.png" alt="">
+  <a href="../../index.html">Claude 101</a> › <a href="../../module-1.html">Module 1 · Découvrir Claude</a> › <b>Fiche</b>
+</div></div>
+<div class="wrap">
+  <header>
+    <div class="kicker">Fiche de révision · Module 1 · Leçon 6</div>
+    <h1>Getting better results</h1>
+    <div class="meta"><span>⏱ Lecture : 5 min</span><span>📚 Leçon : 15 min</span><span>🎯 3 objectifs</span></div>
+    <div class="tldr"><b>L'essentiel en une phrase :</b> le premier prompt n'est que le <b>début d'une conversation</b> — on itère avec un feedback précis, on s'appuie sur les <b>4D de l'AI Fluency</b>, et on teste Claude sur ses propres tâches grâce à des <b>evals</b> simples.</div>
+  </header>
+
+  <h2>Les 4 thèmes clés</h2>
+  <div class="grid">
+
+    <article class="card wide" style="--c:var(--c1)">
+      <span class="num">Thème 1</span>
+      <h3>L'état d'esprit d'itération</h3>
+      <div class="trio">
+        <div><b>1. Brouillon = point de départ</b>Relire, repérer ce qui marche et ce qui coince, puis affiner.</div>
+        <div><b>2. Feedback précis</b>Dire <i>quoi</i> changer et <i>comment</i>, pas seulement « mieux ».</div>
+        <div><b>3. Savoir repartir de zéro</b>Si l'échange a dérivé, un nouveau chat avec un prompt plus clair va souvent plus vite.</div>
+      </div>
+      <div class="ex"><span class="lbl">Feedback vague → feedback précis</span>❌ « Fais plus court. »<br>✅ « Supprime l'introduction, garde 3 puces, et termine par une action concrète à faire cette semaine. »</div>
+    </article>
+
+    <article class="card wide" style="--c:var(--c3)">
+      <span class="num">Thème 2</span>
+      <h3>L'AI Fluency et les 4D</h3>
+      <p style="margin:0 0 8px">L'AI Fluency, c'est savoir <b>collaborer</b> avec l'IA : pas seulement connaître les boutons, mais avoir le <b>jugement</b> pour bien l'utiliser selon la situation.</p>
+      <div class="d4">
+        <div><b>Delegation</b>Décider ce que fait l'humain, ce que fait l'IA, et comment répartir.<i>Ex. : Claude prépare les relances, je gère les appels clients.</i></div>
+        <div><b>Description</b>Bien communiquer : résultat attendu, démarche, comportement.<i>Ex. : la méthode Cadre · Tâche · Règles.</i></div>
+        <div><b>Discernment</b>Évaluer d'un œil critique : qualité, exactitude, pertinence.<i>Ex. : vérifier les chiffres avant d'envoyer.</i></div>
+        <div><b>Diligence</b>Utiliser l'IA de façon responsable : transparence, assumer le résultat.<i>Ex. : signaler qu'un livrable a été rédigé avec l'IA.</i></div>
+      </div>
+      <div class="ex"><span class="lbl">Le lien avec les leçons précédentes</span>La méthode en 3 éléments relève de la <b>Description</b> ; relire, corriger et repartir de zéro relèvent du <b>Discernment</b> et de la <b>Diligence</b>.</div>
+    </article>
+
+    <article class="card" style="--c:var(--c2)">
+      <span class="num">Thème 3</span>
+      <h3>Pourquoi faire des evals ?</h3>
+      <ul>
+        <li>Une <b>eval</b> (évaluation) = un test méthodique de Claude sur <b>tes</b> tâches.</li>
+        <li>Chaque métier est unique : Claude peut exceller sur un texte marketing et avoir besoin d'aide sur une doc technique.</li>
+        <li>Les evals montrent <b>où Claude apporte le plus</b>, <b>où il faut plus de contexte</b> ou d'exemples, et donnent <b>confiance</b> pour les tâches récurrentes.</li>
+      </ul>
+      <div class="ex"><span class="lbl">Exemple</span>Avant de confier à Claude tous tes comptes rendus de réunion, tu le testes sur 5 réunions que tu as déjà résumées toi-même.</div>
+    </article>
+
+    <article class="card" style="--c:var(--c4)">
+      <span class="num">Thème 4</span>
+      <h3>Une eval simple en 4 étapes</h3>
+      <div class="steps" style="grid-template-columns:1fr 1fr">
+        <div><b><span>1</span>Rassembler</b>5 à 10 exemples d'une tâche que tu fais souvent.</div>
+        <div><b><span>2</span>Tester</b>Des prompts qui produiraient ces mêmes résultats, avec ton contexte habituel.</div>
+        <div><b><span>3</span>Comparer</b>Infos clés captées ? Ton adapté ? Qu'est-ce qui manque ?</div>
+        <div><b><span>4</span>Affiner</b>Ajuster le prompt, ajouter des exemples, ou garder une relecture humaine.</div>
+      </div>
+      <div class="ex"><span class="lbl">Exemple données</span>Reprends un tableau que tu as déjà analysé, demande l'analyse à Claude et compare : il trouve peut-être les bons chiffres… mais rate la tendance générale.</div>
+    </article>
+  </div>
+
+  <h2>Réflexion personnelle</h2>
+  <div class="reflect">
+    <h3>Où une eval simple m'aiderait-elle ?</h3>
+    <ul>
+      <li><b>Lettres de candidature</b> : comparer les brouillons de Claude à 5 lettres que j'ai validées moi-même.</li>
+      <li><b>Spécifications Airtable</b> : vérifier que Claude propose les bons types de champs sur des bases que je connais déjà.</li>
+      <li><b>Fiches de révision</b> : contrôler qu'aucune notion clé de la leçon n'a été oubliée.</li>
+    </ul>
+    <p class="note">Questions à garder en tête : quels problèmes ai-je déjà rencontrés ? Quelle technique essayer la prochaine fois ? Lequel des 4D est mon point faible ?</p>
+  </div>
+
+  <h2>Quiz d'entraînement (questions originales)</h2>
+  <section class="quiz" id="quiz"></section>
+
+  <h2>Auto-test : clique pour retourner</h2>
+  <div class="flash">
+    <button class="fc"><div class="fc-in"><div class="face front">Comment considérer son premier prompt ?<small>Clique pour voir</small></div><div class="face back">Comme le début d'une conversation, pas une demande unique et définitive.</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Quand ouvrir un nouveau chat ?<small>Clique pour voir</small></div><div class="face back">Quand l'échange a dérivé : repartir avec un prompt plus clair va souvent plus vite.</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Les 4D de l'AI Fluency ?<small>Clique pour voir</small></div><div class="face back">Delegation · Description · Discernment · Diligence.</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Qu'est-ce qu'une eval ?<small>Clique pour voir</small></div><div class="face back">Un test méthodique de Claude sur tes propres tâches, pour savoir où il est fiable.</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Les 4 étapes d'une eval simple ?<small>Clique pour voir</small></div><div class="face back">Rassembler des exemples · Tester · Comparer · Affiner.</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Quel D pour la méthode Cadre · Tâche · Règles ?<small>Clique pour voir</small></div><div class="face back">Description.</div></div></button>
+  </div>
+
+  <nav class="backnav"><a href="the-headline-not-the-novel.html">← Leçon 5 : The headline, not the novel</a><a href="../../module-1.html">Module 1</a></nav>
+  <footer>Notes de révision personnelles — exemples et quiz originaux, rédigés pour la révision</footer>
+</div>
+<script>
+document.querySelectorAll('.fc').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('on')));
+const QUIZ=[
+ {q:"Tu décides que Claude rédigera les premières versions des relances clients, mais que tu passeras toi-même les appels. Quel D appliques-tu ?",
+  o:["Delegation","Description","Discernment","Diligence"],a:0,
+  w:"Répartir le travail entre l'humain et l'IA, c'est la Delegation."},
+ {q:"Tu remarques que Claude cite une étude introuvable dans ton rapport, et tu la retires. Quel D appliques-tu ?",
+  o:["Delegation","Description","Discernment","Diligence"],a:2,
+  w:"Évaluer d'un œil critique l'exactitude d'une réponse, c'est le Discernment."},
+ {q:"Tu indiques à ton client que la présentation a été préparée avec l'aide de l'IA, et tu assumes son contenu. Quel D appliques-tu ?",
+  o:["Delegation","Description","Discernment","Diligence"],a:3,
+  w:"Transparence et responsabilité sur un travail assisté par l'IA : c'est la Diligence."},
+ {q:"Quel feedback a le plus de chances d'améliorer la réponse ?",
+  o:["« C'est pas terrible, refais. »","« Fais mieux. »","« Garde les 3 premières idées, supprime le reste et ajoute un exemple chiffré à chacune. »","« Plus court. »"],a:2,
+  w:"Un feedback précis dit quoi garder, quoi enlever et quoi ajouter."},
+ {q:"Tu veux savoir si Claude peut rédiger tes comptes rendus de réunion. Quelle première étape d'eval ?",
+  o:["Lui confier toutes les réunions du mois","Rassembler 5 à 10 comptes rendus que tu as déjà faits","Demander à Claude s'il est bon pour ça","Changer de modèle"],a:1,
+  w:"Une eval commence par des exemples de référence, pour pouvoir comparer ensuite."}
+];
+(function(){
+  const box=document.getElementById('quiz'); let good=0, answered=0;
+  box.innerHTML=QUIZ.map((x,i)=>`<div class="q" data-i="${i}"><p>${i+1}. ${x.q}</p>${x.o.map((o,j)=>`<button class="opt" data-j="${j}">${String.fromCharCode(65+j)}. ${o}</button>`).join('')}<div class="why">💡 ${x.w}</div></div>`).join('')
+    +`<div class="qscore"><div class="big" id="qs">0/${QUIZ.length}</div><span id="qmsg">Réponds aux ${QUIZ.length} questions.</span></div>`;
+  box.querySelectorAll('.q').forEach(q=>{
+    q.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{
+      if(q.classList.contains('done')) return;
+      const x=QUIZ[q.dataset.i], j=+b.dataset.j; q.classList.add('done'); answered++;
+      if(j===x.a){b.classList.add('ok');good++} else {b.classList.add('ko');q.querySelectorAll('.opt')[x.a].classList.add('ok')}
+      document.getElementById('qs').textContent=good+'/'+QUIZ.length;
+      if(answered===QUIZ.length) document.getElementById('qmsg').textContent= good===QUIZ.length?"Parfait, leçon maîtrisée 🎉": good>=3?"Bien joué ! Relis les explications des erreurs.":"Relis le thème 2 (les 4D), puis recharge la page pour réessayer.";
+    }));
+  });
+})();
+</script>
+</body>
+</html>

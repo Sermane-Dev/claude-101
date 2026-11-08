@@ -26,7 +26,8 @@ const COURSE = {
           fiche: "fiches/module-1/your-first-conversation.html" },
         { title: "The headline, not the novel", type: "exercise", done: true,
           fiche: "fiches/module-1/the-headline-not-the-novel.html" },
-        { title: "Getting better results", type: "lecture", done: false },
+        { title: "Getting better results", type: "lecture", done: true,
+          fiche: "fiches/module-1/getting-better-results.html" },
         { title: "Corporate voice, begone!", type: "lecture", done: false },
         { title: "Claude desktop app: Chat, Cowork, Code", type: "lecture", done: false }
       ]
