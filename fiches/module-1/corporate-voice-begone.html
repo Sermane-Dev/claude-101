@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Corporate voice, begone! — Claude 101</title>
+<link rel="icon" href="../../assets/img/datacamp-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f5f7fa; --card:#ffffff; --ink:#05192d; --muted:#5d6a78; --line:#e1e6ec;
+    --accent:#05192d; --accent-soft:#d9fde8; --green:#03ef62;
+    --c1:#05192d; --c2:#0a7d4b; --c3:#3b5bdb; --c4:#b07a00; --c5:#7048e8;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0b1724; --card:#13253a; --ink:#eef3f8; --muted:#9fb0c2; --line:#22384f; --accent:#03ef62; --accent-soft:#123a2a; --c1:#03ef62; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15.5px/1.55 Inter,system-ui,sans-serif}
+  .wrap{max-width:980px;margin:0 auto;padding:40px 20px 60px}
+  header{margin-bottom:28px}
+  .kicker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  h1{font-family:"Space Grotesk",Inter,sans-serif;font-size:clamp(30px,5vw,44px);line-height:1.1;margin:8px 0 10px}
+  .meta{color:var(--muted);font-size:14px;display:flex;gap:16px;flex-wrap:wrap}
+  .meta span{background:var(--card);border:1px solid var(--line);padding:4px 10px;border-radius:99px}
+  .tldr{margin-top:20px;background:var(--accent-soft);border-left:4px solid var(--green);padding:14px 18px;border-radius:8px}
+  .tldr b{color:var(--accent)}
+  h2{font-family:"Space Grotesk",Inter,sans-serif;font-size:22px;margin:38px 0 14px}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  @media (max-width:680px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 20px 18px;border-top:5px solid var(--c,var(--accent));display:flex;flex-direction:column}
+  .card .num{font-size:12px;font-weight:600;color:var(--c);letter-spacing:.08em;text-transform:uppercase}
+  .card h3{font-family:"Space Grotesk",Inter,sans-serif;font-size:19px;margin:4px 0 10px;line-height:1.25}
+  .card ul{margin:0 0 12px;padding-left:18px}
+  .card li{margin:4px 0}
+  .ex{margin-top:auto;background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:10px 12px;font-size:14px}
+  .ex .lbl{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--c);margin-bottom:3px}
+  .wide{grid-column:1/-1}
+  .trio{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:6px 0 12px}
+  .trio div{background:var(--bg);border-radius:10px;padding:10px 12px;font-size:14px}
+  .trio b{display:block;color:var(--c);margin-bottom:2px}
+  mark{background:var(--accent-soft);color:inherit;padding:0 3px;border-radius:3px}
+  .flash{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .fc{perspective:900px;height:150px;cursor:pointer;border:0;background:none;padding:0;font:inherit;color:inherit;text-align:left}
+  .fc-in{position:relative;width:100%;height:100%;transition:transform .45s;transform-style:preserve-3d}
+  .fc.on .fc-in{transform:rotateY(180deg)}
+  .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:12px;padding:16px;display:flex;flex-direction:column;justify-content:center;border:1px solid var(--line)}
+  .front{background:var(--card);font-weight:600}
+  .front small{font-weight:400;color:var(--muted);margin-top:8px;font-size:12px}
+  .back{background:#05192d;color:#fff;border-color:var(--green);transform:rotateY(180deg);font-size:14px}
+  .tip{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+  .tip h3{margin:0 0 8px;font-size:16px}
+  .tip ol{margin:0;padding-left:20px}
+  .topbar{background:#05192d;color:#fff}
+  .topbar .in{max-width:980px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:12px;font-size:14px}
+  .topbar img{width:28px;height:28px;border-radius:6px}
+  .topbar a{color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,.3)}
+  .topbar b{color:#03ef62}
+  .backnav{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:28px}
+  .backnav a{text-decoration:none;font-weight:600;color:var(--ink);background:var(--card);border:1px solid var(--line);padding:10px 14px;border-radius:10px}
+  footer{margin-top:40px;color:var(--muted);font-size:13px;text-align:center}
+
+  /* Impression / export PDF : pas de carte coupée entre deux pages */
+  @page{size:A4;margin:12mm}
+  @media print{
+    .topbar,.backnav{display:none}
+    :root{--bg:#fff;--card:#fff;--ink:#05192d;--muted:#555;--line:#ccc;--accent:#05192d;--accent-soft:#d9fde8}
+    body{font-size:12.5px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .wrap{max-width:none;padding:0}
+    h2{break-after:avoid;page-break-after:avoid;margin-top:22px}
+    .grid,.flash{display:block}
+    .card,.tip,.tldr,.ex,.trio div{break-inside:avoid;page-break-inside:avoid}
+    .card{margin-bottom:12px}
+    .trio{display:grid;grid-template-columns:1fr 1fr 1fr}
+    /* Flashcards : question + réponse visibles à plat */
+    .fc{display:block;height:auto;width:100%;margin-bottom:8px;break-inside:avoid;page-break-inside:avoid;perspective:none}
+    .fc-in{transform:none!important;height:auto}
+    .face{position:static;backface-visibility:visible;transform:none!important}
+    .front{border-radius:10px 10px 0 0;border-bottom:0}
+    .front small{display:none}
+    .back{border-radius:0 0 10px 10px;background:var(--accent-soft);color:var(--ink)}
+    .back::before{content:"Réponse : ";font-weight:600;color:var(--accent)}
+  }
+
+  /* Exercice auto-évalué */
+  .lab{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;border-top:5px solid var(--green)}
+  .lab h3{font-family:"Space Grotesk",Inter,sans-serif;margin:0 0 6px;font-size:19px}
+  .lab .brief{background:var(--bg);border-radius:10px;padding:12px 14px;margin:10px 0 14px;font-size:14.5px}
+  .lab textarea{width:100%;min-height:96px;border:1px solid var(--line);border-radius:10px;padding:12px;font:inherit;background:var(--bg);color:var(--ink);resize:vertical}
+  .crit{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin:14px 0}
+  .crit fieldset{border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:0}
+  .crit legend{font-weight:600;font-size:13px;padding:0 6px;text-transform:uppercase;letter-spacing:.06em}
+  .crit label{display:flex;gap:8px;align-items:flex-start;margin:6px 0;font-size:14px;cursor:pointer}
+  .crit input{margin-top:3px;accent-color:#03ef62}
+  .score{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;background:var(--accent-soft);border-radius:12px;padding:14px 16px}
+  .big{width:86px;height:86px;border-radius:18px;background:#05192d;color:#03ef62;display:grid;place-items:center;font:700 28px "Space Grotesk",sans-serif;line-height:1;text-align:center}
+  .big small{display:block;font-size:12px;color:#fff;font-weight:500}
+  .meter{display:grid;grid-template-columns:90px 1fr 44px;gap:10px;align-items:center;font-size:13px;margin:4px 0}
+  .meter .t{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+  .meter .t span{display:block;height:100%;width:0;background:#05192d;transition:width .3s}
+  .meter.bonus .t span{background:#03ef62}
+  #fb{margin:8px 0 0;font-size:14px}
+  .road{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:6px 0 12px}
+  .road div{background:var(--bg);border-radius:10px;padding:10px;font-size:13px;text-align:center}
+  .road b{display:block;font-size:18px;color:var(--c)}
+  .loop{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:6px 0 12px;font-weight:600}
+  .loop span{background:var(--bg);padding:8px 14px;border-radius:99px}
+  @media (max-width:680px){.road{grid-template-columns:1fr 1fr}}
+  @media print{ .lab textarea{min-height:60px} }
+
+  .mail{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:13.5px;line-height:1.5}
+  .mail b{display:block}
+  .checks{list-style:none;padding:0;margin:0 0 12px}
+  .checks li{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
+  .checks li span{flex:none;width:22px;height:22px;border-radius:6px;background:var(--accent-soft);display:grid;place-items:center;font-size:13px;font-weight:700;color:#0a7d4b}
+
+  .draft{background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:12px 14px;font-size:13.5px;font-style:italic;line-height:1.55;margin:0 0 12px}
+  table.fix{width:100%;border-collapse:collapse;font-size:14px;margin:6px 0 12px}
+  .fix th,.fix td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  .fix th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .fix td:first-child{color:#c92a2a;white-space:nowrap}
+  .fix td:last-child{color:#0a7d4b}
+</style>
+</head>
+<body>
+<div class="topbar"><div class="in">
+  <img src="../../assets/img/datacamp-icon.png" alt="">
+  <a href="../../index.html">Claude 101</a> › <a href="../../module-1.html">Module 1 · Découvrir Claude</a> › <b>Fiche</b>
+</div></div>
+<div class="wrap">
+  <header>
+    <div class="kicker">Fiche de révision · Module 1 · Leçon 7</div>
+    <h1>Corporate voice, begone!</h1>
+    <div class="meta"><span>⏱ Lecture : 4 min</span><span>🧪 Leçon pratique</span><span>🎯 Réviser un brouillon trop long ou trop formel</span></div>
+    <div class="tldr"><b>L'essentiel en une phrase :</b> pour améliorer un brouillon, colle-le et dis <b>ce qui ne va pas</b> et <b>comment le corriger</b> — une longueur chiffrée, un ton précis (idéalement avec un exemple) — jamais un simple « fais mieux ».</div>
+  </header>
+
+  <h2>Les 4 thèmes clés</h2>
+  <div class="grid">
+
+    <article class="card" style="--c:var(--c1)">
+      <span class="num">Thème 1</span>
+      <h3>Réviser plutôt que recommencer</h3>
+      <ul>
+        <li>Un brouillon « juste sur le fond » mais raté sur la forme se <b>corrige</b>, il ne se jette pas.</li>
+        <li>Colle le texte dans le prompt : Claude travaille sur la base exacte, sans réinventer les faits.</li>
+      </ul>
+      <div class="ex"><span class="lbl">Structure du prompt</span>1. Le brouillon entre guillemets<br>2. Qui tu es et à qui il s'adresse<br>3. Ce qui ne va pas → ce que tu veux</div>
+    </article>
+
+    <article class="card" style="--c:var(--c2)">
+      <span class="num">Thème 2</span>
+      <h3>Dire quoi ET comment corriger</h3>
+      <table class="fix">
+        <tr><th>Vague</th><th>Précis</th></tr>
+        <tr><td>« Plus court »</td><td>« 120 mots maximum »</td></tr>
+        <tr><td>« Moins rigide »</td><td>« Tutoiement, phrases courtes, pas de formules toutes faites »</td></tr>
+        <tr><td>« Fais mieux »</td><td>« Mets les 2 résultats en puces et termine par une question »</td></tr>
+      </table>
+    </article>
+
+    <article class="card" style="--c:var(--c3)">
+      <span class="num">Thème 3</span>
+      <h3>Les 2 réglages les plus efficaces</h3>
+      <ul>
+        <li><b>Une longueur chiffrée et cohérente</b> : si on te demande moins de 150 mots, écris 150, pas 200. Le chiffre fait foi.</li>
+        <li><b>Un échantillon du ton voulu</b> : une phrase modèle vaut mieux qu'un adjectif.</li>
+      </ul>
+      <div class="ex"><span class="lbl">Exemple de ton</span>« Le ton doit ressembler à ça : <i>“Bonne nouvelle : on a bouclé le trimestre en avance, et voici ce qui a marché.”</i> »</div>
+    </article>
+
+    <article class="card" style="--c:var(--c5)">
+      <span class="num">Thème 4</span>
+      <h3>Contrôler la nouvelle version</h3>
+      <ul class="checks">
+        <li><span>1</span><div>Demande la <b>liste des changements</b> : tu vois tout de suite ce qui a bougé.</div></li>
+        <li><span>2</span><div>Vérifie que le ton n'est pas <b>allé trop loin</b> : « conversationnel » ne veut pas dire familier pour une direction.</div></li>
+        <li><span>3</span><div>Vérifie que les <b>faits</b> sont intacts et complète les <b>crochets</b>.</div></li>
+      </ul>
+      <div class="ex"><span class="lbl">Relance type</span>« Garde ce ton, mais remplace “Salut l'équipe” par une formule cordiale adaptée à la direction. »</div>
+    </article>
+  </div>
+
+  <h2>Exercice d'entraînement auto-évalué</h2>
+  <section class="lab">
+    <h3>À toi de jouer</h3>
+    <div class="brief"><b>Mise en situation :</b> tu es bénévole dans une association sportive. Ce brouillon doit annoncer aux adhérents qu'on réserve désormais les créneaux du gymnase via une application. Il est juste, mais beaucoup trop administratif. Écris un prompt de révision, puis coche ce qu'il contient.</div>
+    <div class="draft">« Objet : Communication relative à l'évolution des modalités de réservation. Madame, Monsieur, nous avons l'honneur de vous informer qu'à compter du 1er décembre, les modalités de réservation des créneaux du gymnase connaîtront une évolution significative, laquelle s'inscrit dans une démarche globale d'optimisation de la gestion de nos infrastructures sportives. Désormais, l'ensemble des réservations devra impérativement être effectué par l'intermédiaire de notre nouvelle application mobile. Nous vous prions d'agréer, Madame, Monsieur, l'expression de nos salutations distinguées. »</div>
+    <textarea id="prompt" placeholder="Écris ton prompt de révision ici (il reste sur ta page, rien n'est envoyé)…"></textarea>
+    <div class="crit">
+      <fieldset><legend>Base</legend>
+        <label><input type="checkbox" data-g="a"> Je colle le brouillon</label>
+        <label><input type="checkbox" data-g="a"> Je dis qui je suis et à qui il s'adresse</label>
+      </fieldset>
+      <fieldset><legend>Diagnostic</legend>
+        <label><input type="checkbox" data-g="b"> Je nomme ce qui ne va pas (trop long, trop formel…)</label>
+        <label><input type="checkbox" data-g="b"> Je dis ce qui doit rester (les faits, la date)</label>
+      </fieldset>
+      <fieldset><legend>Correction</legend>
+        <label><input type="checkbox" data-g="c"> Je fixe une longueur chiffrée</label>
+        <label><input type="checkbox" data-g="c"> Je précise le ton, avec un exemple</label>
+      </fieldset>
+    </div>
+    <div class="score">
+      <div class="big" id="total">0<small>/100</small></div>
+      <div>
+        <div class="meter"><span>Base</span><div class="t"><span id="m-a"></span></div><span id="p-a">0%</span></div>
+        <div class="meter"><span>Diagnostic</span><div class="t"><span id="m-b"></span></div><span id="p-b">0%</span></div>
+        <div class="meter bonus"><span>Correction</span><div class="t"><span id="m-c"></span></div><span id="p-c">0%</span></div>
+        <p id="fb">Coche les critères présents dans ton prompt.</p>
+      </div>
+    </div>
+  </section>
+
+  <h2>Auto-test : clique pour retourner</h2>
+  <div class="flash">
+    <button class="fc"><div class="fc-in"><div class="face front">Que mettre dans un prompt de révision ?<small>Clique pour voir</small></div><div class="face back">Le brouillon collé, le contexte (qui / pour qui), ce qui ne va pas et comment le corriger.</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Pourquoi pas « fais mieux » ?<small>Clique pour voir</small></div><div class="face back">Claude ne sait pas ce qui te gêne : il faut nommer le problème et la correction voulue.</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Les 2 réglages les plus efficaces ?<small>Clique pour voir</small></div><div class="face back">Une longueur chiffrée et un échantillon du ton souhaité.</div></div></button>
+    <button class="fc"><div class="fc-in"><div class="face front">Que vérifier dans la nouvelle version ?<small>Clique pour voir</small></div><div class="face back">La liste des changements, un ton pas trop familier, les faits intacts et les crochets.</div></div></button>
+  </div>
+
+  <nav class="backnav"><a href="getting-better-results.html">← Leçon 6 : Getting better results</a><a href="../../module-1.html">Module 1</a></nav>
+  <footer>Notes de révision personnelles — exemples et exercice originaux, rédigés pour la révision</footer>
+</div>
+<script>
+document.querySelectorAll('.fc').forEach(b=>b.addEventListener('click',()=>b.classList.toggle('on')));
+(function(){
+  const boxes=[...document.querySelectorAll('.crit input')];
+  const pct=g=>{const b=boxes.filter(x=>x.dataset.g===g);return Math.round(100*b.filter(x=>x.checked).length/b.length)};
+  function upd(){
+    const a=pct('a'),b=pct('b'),c=pct('c');
+    [['a',a],['b',b],['c',c]].forEach(([g,v])=>{document.getElementById('m-'+g).style.width=v+'%';document.getElementById('p-'+g).textContent=v+'%'});
+    document.getElementById('total').innerHTML=Math.round((a+b+c)/3)+'<small>/100</small>';
+    let fb;
+    if(a<100) fb="Colle le brouillon et précise qui l'envoie, à qui.";
+    else if(b<100) fb="Nomme le problème et ce qui doit absolument rester.";
+    else if(c<100) fb="Donne un chiffre de longueur et un exemple du ton voulu.";
+    else fb="Prompt de révision complet 🎉 Teste-le, puis demande la liste des changements.";
+    document.getElementById('fb').textContent=fb;
+  }
+  boxes.forEach(b=>b.addEventListener('change',upd));
+})();
+</script>
+</body>
+</html>
